@@ -1,0 +1,87 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<!--<div class="well well-xl">
+<form method="post" action=''enctype="multipart/form-data" >
+	{% csrf_token %}
+	{{ form.as_p }}
+
+	<button type="submit">Agregar</button>
+</form>
+</div>-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+
+    </head>
+	<body class="body">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				{% if object == false %}
+	                <form role="form" enctype="multipart/form-data" action="{% url 'registrar_Doctor'%}" method="post">
+                {% endif %}
+				<form class="centrar-form " enctype="multipart/form-data" method="post">
+					{% csrf_token %}
+					<div class="col-sm-12" class="form-group">
+						<div class="content-titulos">
+	                        <div class="close"  style="color:black;">x</div>
+	                        <h1><b> REGISTRAR DOCTOR<b></h1>
+						</div>
+						<div class="col-sm-12">
+							<label>Nombre</label>
+							<input class="form-control"  title="Por favor, ingrese un nombre" type="text" name="nombre" placeholder="Ingresar Nombre" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Apellidos</label>
+							<input class="form-control"  type="text" name="apellido" placeholder="Ingresar Apellido" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Cedula</label>
+							<input class="form-control" type="number" min=1 max=9999999999 name="cedula" placeholder="Ingresar Numero de Cedula"required>
+						</div>
+
+						<div class="col-sm-12">
+							<label >Telefono</label>
+							<input class="form-control" type="number" min=0000000 max=9999999999  name="telefono" placeholder="Ingresar Telefono" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Correo</label>
+							<input class="form-control" type="email" name="email" placeholder="Ingresar su Correo" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Usuario</label>
+							<input class="form-control" type="text" name="username" placeholder="Ingresar nombre de Usuario" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Contraseña</label>
+							<input class="form-control" type="password" name="password1" placeholder="Ingresar Contraseña"required>
+						</div>
+
+						<div class="col-sm-12">
+							<label >Confirmar contraseña</label>
+							<input class="form-control" type="password" name="password2" placeholder="Confirmar Contraseña"required>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-10 col-md-offset-1">
+							<div class="form-group" style="text-align:center;">
+								<br><button class="btn btn-primary "type="submit">Guardar</button></br>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+   </body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+	});
+</script>
+{% endblock %}

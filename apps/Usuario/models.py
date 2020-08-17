@@ -47,6 +47,8 @@ class Usuario(AbstractBaseUser,PermissionsMixin,models.Model):
         return self.nombre
     def get_usuario(self):
         return self.username
+    def get_email(self):
+        return self.email
     def __str__(self):
         return '{} {}'.format(self.nombre,self.apellido)
     class Meta: #Creo los permisos para los diferentes roles de usuario

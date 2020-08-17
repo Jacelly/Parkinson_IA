@@ -4,6 +4,6 @@ from django.contrib.auth.decorators import login_required
 
 #Incluyo todas la urls de la apliccacion, para que sean leidas en las urls globales de django
 urlpatterns = [
-	
+	path('registrarDoctor/', views.DoctorCreate, name="registrar_Doctor"),
 
 ]

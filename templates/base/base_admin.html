@@ -33,6 +33,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+    <link rel="stylesheet" href="https://bootswatch.com/3/flatly/bootstrap.min.css">
+
     <link rel="stylesheet" type="text/css" href="/static/css/papaya.css?build=1449" />
     <script type="text/javascript" src="/static/js/papaya.js?build=1449"></script>
 
@@ -50,7 +54,11 @@
 </head>
 
 <body>
-    {% block header %} {% endblock %} {% block content %}
+    {% block header %} 
+    <div id="popup" class="modal fade" role="dialog">
+    </div>
+    {% endblock %} 
+    {% block content %}
 
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
@@ -78,10 +86,10 @@
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="index.html">Imagenes MRI</a>
+                                    <a href="index.html">Imagen MRI</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'Sujeto_index' %}">CSV de habla</a>
+                                    <a href="{% url 'Sujeto_index' %}">CSV habla caracteristicas</a>
                                 </li>
                             </ul>
                         </li>
@@ -99,7 +107,13 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="#">opcion1</a>
+                                    <a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>
+                                </li>
+                                <li>
+                                    <a href="#">Nuevo Modelo</a>
+                                </li>
+                                <li>
+                                    <a href="#">Nuevas Imagenes</a>
                                 </li>
                             </ul>
                         </li>
@@ -127,7 +141,7 @@
                                     <a href="{% url 'Sujeto_index' %}">Imagen MRI</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'Sujeto_index' %}">CSV de habla</a>
+                                    <a href="{% url 'Sujeto_index' %}">CSV habla caracteristicas</a>
                                 </li>
                             </ul>
                         </li>
@@ -145,7 +159,13 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="#">opcion1</a>
+                                    <a  href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>
+                                </li>
+                                <li>
+                                    <a href="#">Nuevo Modelo</a>
+                                </li>
+                                <li>
+                                    <a href="#">Nuevas Imagenes</a>
                                 </li>
                             </ul>
                         </li>
@@ -163,6 +183,7 @@
                     <div class="container-fluid">
                         <div class="header-wrap">
                             <form class="form-header" action="" method="POST">
+                                {% csrf_token %}
                                 <input class="au-input au-input--xl" type="text" name="search" placeholder="Search..." />
                                 <button class="au-btn--submit" type="submit">
                                     <i class="zmdi zmdi-search"></i>
@@ -320,10 +341,13 @@
             </div>
         </div>
     </div>
+    <div id="popup" class="modal fade" role="dialog">
+    </div>
     <!-- END PAGE CONTAINER-->
-    {% endblock %} {% block footer %}
-    <h4> este es el footer base </h4>
-    {% endblock %} {% block extrajs %}
+    {% endblock %} 
+    {% block footer %}
+    {% endblock %} 
+    {% block extrajs %}
     <!-- Jquery JS-->
     <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
     <!-- Bootstrap JS-->
@@ -346,6 +370,24 @@
 
     <!-- Main JS-->
     <script src={% static 'js/main.js' %}></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+    <script>
+            function abrir_modal(url)
+        {
+                $('#popup').load(url, function()
+                {
+                        $(this).modal('show');
+                });
+                $('#popup').on('hidden.bs.modal', function (e) {
+                  location.reload();
+                });
+                 return false;
+        }
+    </script>
     {% endblock %}
 
 </body>

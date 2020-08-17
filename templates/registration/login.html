@@ -54,43 +54,34 @@ LOGIN
                 </div>
             {% endif %}
         </div>
-        <div class="color-content-login ">
-        <br>
-        
-        <form method="post">
-        	{% csrf_token %}
-        	<div class="row">
-            	<div class="col-md-8 col-md-offset-2">
-            		<div class="form-group">
-                		<!--<input class="form-control" id="email" placeholder="Ingresar Correo" type="email" name="email" required>-->
-                        <input class="col-xs-12 estiloInput colorInput" type="email"  name="username"  placeholder="Correo Electrónico" required>
-            	   </div>
+        <div class="color-content-login "style="text-align:center;">
+            <br>
+            <img id = "imagenFormato" src="/static/imagenes/brainje.jpg"> <br><br>
+            <form method="post">
+            	{% csrf_token %}
+            	<div class="row">
+                	<div class="col-md-8 col-md-offset-2">
+                		<div class="form-group">
+                    		<!--<input class="form-control" id="email" placeholder="Ingresar Correo" type="email" name="email" required>-->
+                            <input class="col-xs-12 estiloInput colorInput"  name="username"  placeholder="email">
+                	   </div>
+                    </div>
+                </div>    
+                <div class="row">
+                	<div class="col-md-8 col-md-offset-2">
+                		<br><div class="form-group input-group ">
+                    		<!--<input class="form-control" id="password" type="password" placeholder="Ingresar Contraseña" name="password" required>-->
+                            <input class="col-xs-11 estiloInput colorInput" type="password" id="password"  name="password" autocomplete="on" placeholder="Contraseña" required>
+                            <span id="show-hide-passwd" action="hide" class=" glyphicon glyphicon-eye-open"></span>
+                	   </div>
+                	    
+                    </div>
                 </div>
-            </div>    
-            <div class="row">
-            	<div class="col-md-8 col-md-offset-2">
-            		<br><div class="form-group input-group ">
-                		<!--<input class="form-control" id="password" type="password" placeholder="Ingresar Contraseña" name="password" required>-->
-                        <input class="col-xs-11 estiloInput colorInput" type="password" id="password"  name="password" autocomplete="on" placeholder="Contraseña" required>
-                        <span id="show-hide-passwd" action="hide" class=" glyphicon glyphicon-eye-open"></span>
-            	   </div>
-            	    
-                </div>
-            </div>
-            {% if form.errors %}
-                        <p style="color:red;font-weight: bold;" id="heading">Las credenciales son inválidas</p>
-            {% endif %}
-             <div class="row" >
-                <div style="text-align:center;" >
-                        <!-- <button type="submit" class="btn btn-primary login">Ingresar</button>-->
-                        <br><br><input class="btn boton-primary"  type="submit"  value="Ingresar">
-                  <!--{% if request.GET.next %}
-                        <input type="hidden" name="next" value="{{ request.GET.next }}">
-                    {% endif %}-->
-                </div>
-            </div>
-
-        </form>
+                {% if form.errors %}
+                            <p style="color:red;font-weight: bold;" id="heading">Las credenciales son inválidas</p>
+                {% endif %}
+                <br><br><input class="btn boton-primary"  type="submit"  value="Ingresar">
+            </form>
         </div>
     </body>
     <div id="popup" class="modal fade" role="dialog">
@@ -103,10 +94,10 @@ LOGIN
 {% endblock %}
 {% block footer %}
     <div class="footer">
-        <h5><b>Clínica Estética Dental</b></h5>
+        <h5><b>BRAINJE</b></h5>
         <h5><b>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</b></h5> 
         <h5>Todos los derechos reservados ©</h5> 
         <h5><b>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;</b></h5> 
-        <h5>2019 </h5>
+        <h5>2020 </h5>
     </div>
 {% endblock %}
