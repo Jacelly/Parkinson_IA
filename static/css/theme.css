@@ -1445,7 +1445,7 @@ section {
 }
 
 .account-dropdown {
-    min-width: 305px;
+    min-width: 1account-dropdown__footer00px;
     position: absolute;
     top: 58px;
     right: 0;
@@ -1554,7 +1554,7 @@ section {
 }
 
 .account-dropdown__footer {
-    border-top: 1px solid #f2f2f2;
+    border-top: 1px solid #097d7c;
 }
 
 .account-dropdown__footer a {
@@ -1565,7 +1565,7 @@ section {
 }
 
 .account-dropdown__footer a:hover {
-    background: #4272d7;
+    background: #097d7c;
     color: #fff;
 }
 
@@ -14581,9 +14581,11 @@ section {
 }
 
 .bg-overlay--blue {
+    background: rgba(09, 124, 125, 0.9);
+}
+.bg-overlay--turqueza{
     background: rgba(49, 89, 253, 0.9);
 }
-
 .bg-c1 {
     background: #00ad5f;
 }

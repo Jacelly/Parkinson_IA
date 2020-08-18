@@ -11,16 +11,17 @@
 </div>-->
 <html lang="en">
     <head>
+    	<meta charset="UTF-8">
         <meta charset="UTF-8">
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
         <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
-
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     </head>
 	<body class="body">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				{% if object == false %}
+					{% csrf_token %}
 	                <form role="form" enctype="multipart/form-data" action="{% url 'registrar_Doctor'%}" method="post">
                 {% endif %}
 				<form class="centrar-form " enctype="multipart/form-data" method="post">
@@ -64,24 +65,26 @@
 							<label >Confirmar contraseña</label>
 							<input class="form-control" type="password" name="password2" placeholder="Confirmar Contraseña"required>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-10 col-md-offset-1">
-							<div class="form-group" style="text-align:center;">
-								<br><button class="btn btn-primary "type="submit">Guardar</button></br>
+						
+							<div class="col-md-10 col-md-offset-1">
+								<div class="form-group" style="text-align:center;">
+									<br><button class="btn btn-primary "type="submit">Guardar</button></br>
+								</div>
 							</div>
-						</div>
+					
 					</div>
+
 				</form>
 			</div>
 		</div>
+
    </body>
 </html>
 <script>
 	document.querySelector('.close').addEventListener('click',
 	function(){
 		document.querySelector('.modal-content').style.display='none';
-		location.href =window.location.href;
+		location.href ='/home_administrador/';
 	});
 </script>
 {% endblock %}

@@ -5,9 +5,10 @@ from apps.Doctor.models import Doctor
 from django.contrib import messages
 from django.contrib.auth.models import Permission
 from apps.Usuario.forms import RegistroFormularioDoctor
+from apps.Usuario.models import Administrador
 # Create your views here.
 def DoctorCreate(request):
-	#administrador = Administrador.objects.get(id=request.user.id)
+	administrador = Administrador.objects.get(id=request.user.id)
 	if request.method == 'POST':
 		form = RegistroFormularioDoctor(request.POST or None ,request.FILES or None)
 		if form.is_valid():
@@ -19,10 +20,10 @@ def DoctorCreate(request):
 			permisoDoctor = Permission.objects.get(codename='is_doctor')
 			my_user=Doctor.objects.get(id=form.save().id)
 			my_user.user_permissions.add(permisoDoctor)
-			return redirect('home_doctor')
+			return redirect('home_admin')
 		else:
 			messages.error(request, 'No se ha podido registar Doctor.')
-			return redirect('home_doctor')
+			return redirect('home_admin')
 	else:
 		form = RegistroFormularioDoctor()
 	return render(request, 'Usuario/registrarDoctor.html', {

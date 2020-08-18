@@ -1,10 +1,12 @@
 <!-- Para cargar los archivos estaticos del proyecto-->
 {% load static %}
 <!DOCTYPE html>
+{% block content %}
 <html lang="es">
 
 <head>
     {% block extrahead %}
+    <link rel="shortcut icon" href="#">
     <!-- Fontfaces CSS-->
     <link href={% static 'css/font-face.css' %} rel="stylesheet" media="all">
     <link href={% static 'vendor/font-awesome-4.7/css/font-awesome.min.css' %} rel="stylesheet" media="all">
@@ -33,16 +35,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
-    <link rel="stylesheet" href="https://bootswatch.com/3/flatly/bootstrap.min.css">
+
 
     <link rel="stylesheet" type="text/css" href="/static/css/papaya.css?build=1449" />
-    <script type="text/javascript" src="/static/js/papaya.js?build=1449"></script>
+    <script  src="/static/js/papaya.js?build=1449"></script>
 
     <title>BRAINJE</title>
 
-    <script type="text/javascript">
+    <script>
     var params = [];
     params["encodedImages"] = ["{% static 'data/OVERLAY_EsantiJuanJose.nii'%}"];
     params ["images"]  = ["{% static 'data/OVERLAY_EsantiJuanJose.nii'%}"];
@@ -54,11 +54,7 @@
 </head>
 
 <body>
-    {% block header %} 
-    <div id="popup" class="modal fade" role="dialog">
-    </div>
-    {% endblock %} 
-    {% block content %}
+    
 
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
@@ -107,13 +103,17 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
+                                </li>
+                                <li>
+                                    <a href="#">Nuevas Imagenes</a>
                                 </li>
                                 <li>
                                     <a href="#">Nuevo Modelo</a>
                                 </li>
                                 <li>
-                                    <a href="#">Nuevas Imagenes</a>
+                                    <a href="#">Estudio PD con Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -127,7 +127,7 @@
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
                 <a href="#">
-                    <img src="{% static 'imagenes/brainje2_250x80.png' %}" alt="Cool Admin" />
+                    <img src="{% static 'imagenes/brainje2_250x80.png' %}" alt="Admin" />
                 </a>
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
@@ -159,13 +159,17 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a  href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>
+                                    <!--<a  href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
+                                </li>
+                                <li>
+                                    <a href="#">Nuevas Imagenes</a>
                                 </li>
                                 <li>
                                     <a href="#">Nuevo Modelo</a>
                                 </li>
                                 <li>
-                                    <a href="#">Nuevas Imagenes</a>
+                                    <a href="#">Estudio PD con Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -182,15 +186,8 @@
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <form class="form-header" action="" method="POST">
-                                {% csrf_token %}
-                                <input class="au-input au-input--xl" type="text" name="search" placeholder="Search..." />
-                                <button class="au-btn--submit" type="submit">
-                                    <i class="zmdi zmdi-search"></i>
-                                </button>
-                            </form>
+                            <h2>Modo: Administrador</h2>
                             <div class="header-button">
-
                                 <div class="account-wrap">
                                     <div class="account-item clearfix js-item-menu">
                                         <div class="image">
@@ -341,55 +338,54 @@
             </div>
         </div>
     </div>
-    <div id="popup" class="modal fade" role="dialog">
-    </div>
     <!-- END PAGE CONTAINER-->
-    {% endblock %} 
-    {% block footer %}
-    {% endblock %} 
-    {% block extrajs %}
-    <!-- Jquery JS-->
-    <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
-    <!-- Bootstrap JS-->
+    
+    <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
-    <!-- Vendor JS -->
-    <script src={% static 'vendor/slick/slick.min.js' %}>
-    </script>
-    <script src={% static 'vendor/wow/wow.min.js' %}></script>
-    <script src={% static 'vendor/animsition/animsition.min.js' %}></script>
-    <script src={% static 'vendor/bootstrap-progressbar/bootstrap-progressbar.min.js' %}>
-    </script>
-    <script src={% static 'vendor/counter-up/jquery.waypoints.min.js' %}></script>
-    <script src={% static 'vendor/counter-up/jquery.counterup.min.js' %}>
-    </script>
-    <script src={% static 'vendor/circle-progress/circle-progress.min.js' %}></script>
-    <script src={% static 'vendor/perfect-scrollbar/perfect-scrollbar.js' %}></script>
-    <script src={% static 'vendor/chartjs/Chart.bundle.min.js' %}></script>
-    <script src={% static 'vendor/select2/select2.min.js' %}>
-    </script>
-
-    <!-- Main JS-->
-    <script src={% static 'js/main.js' %}></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-
-    <script>
-            function abrir_modal(url)
-        {
-                $('#popup').load(url, function()
-                {
-                        $(this).modal('show');
-                });
-                $('#popup').on('hidden.bs.modal', function (e) {
-                  location.reload();
-                });
-                 return false;
-        }
-    </script>
-    {% endblock %}
-
+    </div>
 </body>
 
 </html>
+<script>
+    function abrir_modal(url)
+    {
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        $('#popup').on('hidden.bs.modal', function (e) {
+          location.reload();
+        });
+         return false;
+    }
+</script>
+{% endblock %} 
+{% block extrajs %}
+<!-- Jquery JS-->
+<script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
+<!-- Bootstrap JS-->
+
+<!-- Vendor JS -->
+<script src={% static 'vendor/slick/slick.min.js' %}>
+</script>
+<script src={% static 'vendor/wow/wow.min.js' %}></script>
+<script src={% static 'vendor/animsition/animsition.min.js' %}></script>
+<script src={% static 'vendor/bootstrap-progressbar/bootstrap-progressbar.min.js' %}>
+</script>
+<script src={% static 'vendor/counter-up/jquery.waypoints.min.js' %}></script>
+<script src={% static 'vendor/counter-up/jquery.counterup.min.js' %}>
+</script>
+<script src={% static 'vendor/circle-progress/circle-progress.min.js' %}></script>
+<script src={% static 'vendor/perfect-scrollbar/perfect-scrollbar.js' %}></script>
+<script src={% static 'vendor/chartjs/Chart.bundle.min.js' %}></script>
+<script src={% static 'vendor/select2/select2.min.js' %}>
+</script>
+
+<!-- Main JS-->
+<script src={% static 'js/main.js' %}></script>
+
+
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+{% endblock %}
