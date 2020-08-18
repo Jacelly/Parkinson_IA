@@ -1,0 +1,81 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<!--<div class="well well-xl">
+<form method="post" action=''enctype="multipart/form-data" >
+	{% csrf_token %}
+	{{ form.as_p }}
+
+	<button type="submit">Agregar</button>
+</form>
+</div>-->
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+        <meta charset="UTF-8">
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    </head>
+	<body class="body">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				{% if object == false %}
+					{% csrf_token %}
+	                <form role="form" enctype="multipart/form-data" action="{% url 'registrar_ImagenMRI'%}" method="post">
+                {% endif %}
+				<form class="centrar-form " enctype="multipart/form-data" method="post">
+					{% csrf_token %}
+					<div class="col-sm-12" class="form-group">
+						<div class="content-titulos">
+	                        <div class="close"  style="color:black;">x</div>
+	                        <h1><b> REGISTRAR IMAGEN DE RESONANCIA MAGNÉTICA<b></h1>
+						</div>
+						<div class="col-sm-12">
+							<label>Nombre</label>
+							<input class="form-control"  type="text" name="nombre" placeholder="Ingresar Nombre" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Tipo</label>
+							<input class="form-control"  type="text" name="tipo" placeholder="Ingresar Tipo" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Tamaño</label>
+							<input class="form-control" type="text" name="tamanio" placeholder="Ingresar tamaño"required>
+						</div>
+
+						<div class="col-sm-12">
+							<label >Sujeto</label>
+							<input class="form-control" type="number" min=0000000 max=9999999999  name="id_sujeto" placeholder="Escoge al sujeto asociado a esta imagen" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Descripción</label>
+							<input class="form-control" type="text" name="descripcion" placeholder="Ingresar una breve descripción" required>
+						</div>
+						<div class="col-sm-12">
+							<label >Imagen</label>
+							<input class="form-control" type="text" name="imagen" placeholder="Cargar imagen (.nii)" required>
+						</div>
+
+							<div class="col-md-10 col-md-offset-1">
+								<div class="form-group" style="text-align:center;">
+									<br><button class="btn btn-primary "type="submit">Guardar</button></br>
+								</div>
+							</div>
+					
+					</div>
+
+				</form>
+			</div>
+		</div>
+
+   </body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href ='/home_administrador/';
+	});
+</script>
+{% endblock %}
