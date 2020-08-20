@@ -33,119 +33,6 @@ smooth=1.
 
 # Create your views here.
 
-'''
-Guarda una imagen nifty en jpg; si tiene un solo corte en z se lo toma caso contrario
-se calcula la mitad del corte en z y luego es procesado como un solo slice
-Ej: saveMRINiftytoJPG("./mr1.3.12.2.1107.5.2.32.35170.201102231753385275793382.0.0.0_t2_tirm_TRA_dark-fluid_3mm_20110223165745_9.nii.gz",".","mr1.3.12.2.1107.5.2.32.35170.201102231753385275793382.0.0.0_t2_tirm_TRA_dark-fluid_3mm_20110223165745_9")
-'''
-def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
-  grid_image = sitk.ReadImage(PathSource)
-  nda = sitk.GetArrayFromImage(grid_image)
-  z=nda.shape[0]
-  if z==1:
-    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
-    #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
-    return 1
-  elif z>1:
-    n=int(z/2)
-    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
-    #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg --sliceToConvert n
-    return 1
-  else:
-    return -1
-
-
-'''
-Cambia la dimension a la imagen a un estandar (192, 256, 3)
-Ej: changedim('0_output-slice000.jpg')
-'''
-def changedim(Img):
-  with open(Img, 'r+b') as f:
-      with Image.open(f) as image:
-          cover = resizeimage.resize_cover(image, [256, 192])
-          cover.save(Img, image.format)
-
-
-'''
-Funcion que retorna verdadero o falso para imagen del cerebro JPG usando un modelo predefinido
-Ej: isBraimJPG("0_output-slice000.jpg","brain_not_brain.h5")
-'''
-def isBraimJPG(Img,modelo):
-  # load an image from file
-  #image = load_img('rY99.jpg' ,target_size=(256, 192,3))
-  image = load_img(Img, target_size=(256, 192,3))
-  
-  # convert the image pixels to a numpy array
-  image = img_to_array(image)
-
-  # reshape data for the model
-  image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
-
-  # prepare the image for the VGG model
-  image = preprocess_input(image)
-
-  # load weights into new model
-  model = define_model()
-
-  #cargamos el modelo guardado
-  model.load_weights(modelo)
-
-  #ejecutamos la prediccion
-  pred = model.predict(image, batch_size=1, verbose=True)
-  pred[pred > 0.5] = 1.
-  pred[pred <= 0.5] = 0.
-
-  if pred[0][0]==1:
-    return True
-  else:
-    return False
-
-'''
-Generar mascaras a partir de 2 imagenes MRI, T1 y FLAIR, usando un modelo precargao y dano una ruta 
-de salida donde grabaremos la imagen resultante mascara
-Ej: 
-T1_image = 'mPPMI_3664_MR_SAG_T1_3DMPRAGE__br_raw_20130321141121355_9_S184907_I363981.nii' #'./input/pre/FLAIR.nii.gz'#sys.argv[1] #absolute path of the flair image.
-FLAIR_image = 'mrPPMI_3664_MR_AX_FLAIR_br_raw_20130321141116659_8_S184906_I363980.nii'#'./input/pre/T1.nii.gz'#sys.argv[2] #absolute path of the t1 image.
-    
-model_path = './sample_data/Parkison-s-disease-/models/unet2/unet2.h5'
-MASK_image =  'M_3664.nii.gz' 
-MASK_folder =  '/content/media/MascaraBinaria' 
-generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image,MASK_folder)
-'''
-def generateMaskTwoArgument(FLAIR_image_path, T1_image_path, model_path, output_path,pathFolderfinal):
-
-    FLAIR_image = sitk.ReadImage(FLAIR_image_path)
-    FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
-    
-    T1_image = sitk.ReadImage(T1_image_path)
-    T1_array = sitk.GetArrayFromImage(FLAIR_image)
-    
-    img_two_channels = general_preprocessing(FLAIR_array, T1_array)
-    img_shape = (rows_standard, cols_standard, 2)
-    model = get_unet_2(img_shape)
-    #if you want to test three models ensemble, just do like this: pred = (pred_1+pred_2+pred_3)/3
-    model.load_weights(model_path)
-    pred = model.predict(img_two_channels, batch_size=1, verbose=True)
-    pred[pred > 0.5] = 1.
-    pred[pred <= 0.5] = 0.
-    
-    original_pred = general_postprocessing(FLAIR_array, pred)
-    mask_new = sitk.GetImageFromArray(original_pred)
-    mask_new.CopyInformation(FLAIR_image)
-    #print("Inicio------------------------------------------------------------->")
-    for k in FLAIR_image.GetMetaDataKeys():
-      v = FLAIR_image.GetMetaData(k)
-      mask_new.SetMetaData(k,v)
-      #print("({0}) = = \"{1}\"".format(k,v))
-    #print("Fin------------------------------------------------------------->")
-    print("Inicio------------------------------------------------------------->")
-    for k in mask_new.GetMetaDataKeys():
-      v = mask_new.GetMetaData(k)
-      print("({0}) = = \"{1}\"".format(k,v))
-    print("Fin------------------------------------------------------------->")
-    final_output_path=pathFolderfinal+output_path
-    sitk.WriteImage(mask_new, final_output_path )
-
 def mask_X_size(file):
     image_path = sitk.ReadImage(file)
     image_path_array = sitk.GetArrayFromImage(image_path)
@@ -185,29 +72,6 @@ def get_crop_shape(target, refer):
         ch1, ch2 = int(ch/2), int(ch/2)
 
     return (ch1, ch2), (cw1, cw2)
-
-'''
-Generar mascara usando como referencia image MRI Flair y mascara binaria
-Ej:getMascaraIntensidad('/content/mrESANDI_ITOIZ_JUAN_JOSE_t2_tirm_TRA_dark-fluid_3mm_20110524164030_9.nii.gz','/content/mjuanjose.nii','/content/media/MascarasIntensidades')
-'''
-def getMascaraIntensidad(Flair,MaskB,pathFolderfinal)
-  FLAIR_image_path = Flair  
-  MASK_image_path =  MaskB
-
-  FLAIR_image = sitk.ReadImage(FLAIR_image_path,sitk.sitkInt32)
-  MASK_image = sitk.ReadImage(MASK_image_path,sitk.sitkInt32)
-  FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
-  MASK_array = sitk.GetArrayFromImage(MASK_image)
-  dotProduct = np.multiply(FLAIR_array,MASK_array)
-  mask_new = sitk.GetImageFromArray(dotProduct)
-  mask_new.CopyInformation(FLAIR_image)
-  #print("Inicio------------------------------------------------------------->")
-  for k in FLAIR_image.GetMetaDataKeys():
-    v = FLAIR_image.GetMetaData(k)
-    mask_new.SetMetaData(k,v)
-    #print("({0}) = = \"{1}\"".format(k,v))
-  filename_resultImage = pathFolderfinal+"ProductP" + MASK_image_path
-  sitk.WriteImage(mask_new, filename_resultImage )
 
 #post procesamiento Flair generacion de mascara
 def general_postprocessing(FLAIR_array, pred):
@@ -470,3 +334,197 @@ def get_unet_2(img_shape = None, first5=True):
     model.compile(optimizer=Adam(lr=(2e-4)), loss=dice_coef_loss)
 
     return model
+
+#extraer caracteristicas usando funcion que etiqueta y captura objetos por su forma o intesidad
+#tiene caracter estadistico(intensidad)
+def extraerCaracteristicas(Final_MASK_image_path,name):
+  #Lectura de las mascara- con intensidades
+  Mask_image = sitk.ReadImage(Final_MASK_image_path,sitk.sitkInt32)
+  #Declaramos las dos variables para obtener información segun forma o intensidad
+  #Intensidad
+  cc = sitk.ConnectedComponent(Mask_image>0)
+  intensity_stats = sitk.LabelIntensityStatisticsImageFilter()
+  intensity_stats.Execute(cc,Mask_image)
+  #Forma
+  cc = sitk.ConnectedComponentImageFilter()
+  cca_image=cc.Execute(Mask_image)
+  shape_stats = sitk.LabelShapeStatisticsImageFilter()
+  shape_stats.Execute(cca_image)
+
+  nombrePaciente=name
+
+  stats_list = [(intensity_stats.GetKurtosis(i),
+                intensity_stats.GetPhysicalSize(i),
+                intensity_stats.GetRoundness(i),
+                intensity_stats.GetPerimeter(i),
+                intensity_stats.GetVariance(i),
+                #intensity_stats.GetElongation(i),
+                intensity_stats.GetStandardDeviation(i),
+                  shape_stats.GetPhysicalSize(i),
+                  shape_stats.GetElongation(i),
+                  shape_stats.GetFlatness(i)) for i in intensity_stats.GetLabels()]
+  cols=["Curtosis_intensidad",
+        "Área_intensidad",
+        "Redondez_intensidad",
+        "Perimetro_intensidad",
+        "Varianza_intensidad",
+        #"Elongación_intensidad",
+        "Desviación estandar_intensidad",
+        "Volumen_forma (nm^3)",
+        "Elongación_forma",
+        "Flatness(llanura)_forma",]
+  stats = pd.DataFrame(data=stats_list, index=intensity_stats.GetLabels(), columns=cols)
+  #stats.describe()
+  xpru=stats.mean()
+  print(xpru)
+  stats_list = [ (
+                              nombrePaciente,
+                              xpru[0],
+                              xpru[1],
+                              xpru[2],
+                              xpru[3],
+                              xpru[4],
+                              xpru[5],
+                              xpru[6],
+                              xpru[7],
+                              xpru[8],
+                              intensity_stats.GetNumberOfLabels())]
+  return stats_list
+
+'''
+Guarda una imagen nifty en jpg; si tiene un solo corte en z se lo toma caso contrario
+se calcula la mitad del corte en z y luego es procesado como un solo slice
+Ej: saveMRINiftytoJPG("./mr1.3.12.2.1107.5.2.32.35170.201102231753385275793382.0.0.0_t2_tirm_TRA_dark-fluid_3mm_20110223165745_9.nii.gz",".","mr1.3.12.2.1107.5.2.32.35170.201102231753385275793382.0.0.0_t2_tirm_TRA_dark-fluid_3mm_20110223165745_9")
+'''
+def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
+  grid_image = sitk.ReadImage(PathSource)
+  nda = sitk.GetArrayFromImage(grid_image)
+  z=nda.shape[0]
+  if z==1:
+    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
+    #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
+    return 1
+  elif z>1:
+    n=int(z/2)
+    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
+    #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg --sliceToConvert n
+    return 1
+  else:
+    return -1
+
+
+'''
+Cambia la dimension a la imagen a un estandar (192, 256, 3)
+Ej: changedim('0_output-slice000.jpg')
+'''
+def changedim(Img):
+  with open(Img, 'r+b') as f:
+      with Image.open(f) as image:
+          cover = resizeimage.resize_cover(image, [256, 192])
+          cover.save(Img, image.format)
+
+
+'''
+Funcion que retorna verdadero o falso para imagen del cerebro JPG usando un modelo predefinido
+Ej: isBraimJPG("0_output-slice000.jpg","brain_not_brain.h5")
+'''
+def isBraimJPG(Img,modelo):
+  # load an image from file
+  #image = load_img('rY99.jpg' ,target_size=(256, 192,3))
+  image = load_img(Img, target_size=(256, 192,3))
+  
+  # convert the image pixels to a numpy array
+  image = img_to_array(image)
+
+  # reshape data for the model
+  image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+
+  # prepare the image for the VGG model
+  image = preprocess_input(image)
+
+  # load weights into new model
+  model = define_model()
+
+  #cargamos el modelo guardado
+  model.load_weights(modelo)
+
+  #ejecutamos la prediccion
+  pred = model.predict(image, batch_size=1, verbose=True)
+  pred[pred > 0.5] = 1.
+  pred[pred <= 0.5] = 0.
+
+  if pred[0][0]==1:
+    return True
+  else:
+    return False
+
+'''
+Generar mascaras a partir de 2 imagenes MRI, T1 y FLAIR, usando un modelo precargao y dano una ruta 
+de salida donde grabaremos la imagen resultante mascara
+Ej: 
+T1_image = 'mPPMI_3664_MR_SAG_T1_3DMPRAGE__br_raw_20130321141121355_9_S184907_I363981.nii' #'./input/pre/FLAIR.nii.gz'#sys.argv[1] #absolute path of the flair image.
+FLAIR_image = 'mrPPMI_3664_MR_AX_FLAIR_br_raw_20130321141116659_8_S184906_I363980.nii'#'./input/pre/T1.nii.gz'#sys.argv[2] #absolute path of the t1 image.
+    
+model_path = './sample_data/Parkison-s-disease-/models/unet2/unet2.h5'
+MASK_image =  'M_3664.nii.gz' 
+MASK_folder =  '/content/media/MascaraBinaria' 
+generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image,MASK_folder)
+'''
+def generateMaskTwoArgument(FLAIR_image_path, T1_image_path, model_path, output_path,pathFolderfinal):
+
+    FLAIR_image = sitk.ReadImage(FLAIR_image_path)
+    FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
+    
+    T1_image = sitk.ReadImage(T1_image_path)
+    T1_array = sitk.GetArrayFromImage(FLAIR_image)
+    
+    img_two_channels = general_preprocessing(FLAIR_array, T1_array)
+    img_shape = (rows_standard, cols_standard, 2)
+    model = get_unet_2(img_shape)
+    #if you want to test three models ensemble, just do like this: pred = (pred_1+pred_2+pred_3)/3
+    model.load_weights(model_path)
+    pred = model.predict(img_two_channels, batch_size=1, verbose=True)
+    pred[pred > 0.5] = 1.
+    pred[pred <= 0.5] = 0.
+    
+    original_pred = general_postprocessing(FLAIR_array, pred)
+    mask_new = sitk.GetImageFromArray(original_pred)
+    mask_new.CopyInformation(FLAIR_image)
+    #print("Inicio------------------------------------------------------------->")
+    for k in FLAIR_image.GetMetaDataKeys():
+      v = FLAIR_image.GetMetaData(k)
+      mask_new.SetMetaData(k,v)
+      #print("({0}) = = \"{1}\"".format(k,v))
+    #print("Fin------------------------------------------------------------->")
+    print("Inicio------------------------------------------------------------->")
+    for k in mask_new.GetMetaDataKeys():
+      v = mask_new.GetMetaData(k)
+      print("({0}) = = \"{1}\"".format(k,v))
+    print("Fin------------------------------------------------------------->")
+    final_output_path=pathFolderfinal+output_path
+    sitk.WriteImage(mask_new, final_output_path )
+
+'''
+Generar mascara usando como referencia image MRI Flair y mascara binaria
+Ej:getMascaraIntensidad('/content/mrESANDI_ITOIZ_JUAN_JOSE_t2_tirm_TRA_dark-fluid_3mm_20110524164030_9.nii.gz','/content/mjuanjose.nii','/content/media/MascarasIntensidades')
+'''
+def getMascaraIntensidad(Flair,MaskB,pathFolderfinal)
+  FLAIR_image_path = Flair  
+  MASK_image_path =  MaskB
+
+  FLAIR_image = sitk.ReadImage(FLAIR_image_path,sitk.sitkInt32)
+  MASK_image = sitk.ReadImage(MASK_image_path,sitk.sitkInt32)
+  FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
+  MASK_array = sitk.GetArrayFromImage(MASK_image)
+  dotProduct = np.multiply(FLAIR_array,MASK_array)
+  mask_new = sitk.GetImageFromArray(dotProduct)
+  mask_new.CopyInformation(FLAIR_image)
+  #print("Inicio------------------------------------------------------------->")
+  for k in FLAIR_image.GetMetaDataKeys():
+    v = FLAIR_image.GetMetaData(k)
+    mask_new.SetMetaData(k,v)
+    #print("({0}) = = \"{1}\"".format(k,v))
+  filename_resultImage = pathFolderfinal+"ProductP" + MASK_image_path
+  sitk.WriteImage(mask_new, filename_resultImage )
+
+

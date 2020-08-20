@@ -1,11 +1,4 @@
 asgiref==3.2.10
-Django==3.0.8
-Pillow==7.2.0
-pytz==2020.1
-sqlparse==0.3.1
-python-resize-image==1.1.19
-med2image==2.2.4
-Pillow==7.0.0
 absl-py==0.8.1
 astor==0.8.0
 backports.weakref==1.0.post1
@@ -13,6 +6,7 @@ bleach==1.5.0
 cachetools==3.1.1
 certifi==2019.9.11
 chardet==3.0.4
+Django==3.0.8
 enum34==1.1.6
 funcsigs==1.0.2
 functools32==3.2.3.post2
@@ -29,6 +23,7 @@ Keras==2.0.5
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
 Markdown==3.1.1
+med2image==2.2.4
 mock==3.0.5
 numpy==1.16.5
 oauthlib==3.1.0
@@ -37,12 +32,17 @@ protobuf==3.10.0
 pyasn1==0.4.7
 pyasn1-modules==0.2.7
 PyYAML==5.1.2
+Pillow==7.0.0
+python-resize-image==1.1.19
+pandas==0.24.2
+pytz==2020.1
 requests==2.22.0
 requests-oauthlib==1.3.0
 rsa==4.0
 scipy==1.2.2
 SimpleITK==1.2.3
 six==1.12.0
+sqlparse==0.3.1
 tensorboard==1.14.0
 tensorflow-estimator==1.14.0
 tensorflow==1.14.0
