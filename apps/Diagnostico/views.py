@@ -103,8 +103,16 @@ def isBraimJPG(Img,modelo):
 '''
 Generar mascaras a partir de 2 imagenes MRI, T1 y FLAIR, usando un modelo precargao y dano una ruta 
 de salida donde grabaremos la imagen resultante mascara
+Ej: 
+T1_image = 'mPPMI_3664_MR_SAG_T1_3DMPRAGE__br_raw_20130321141121355_9_S184907_I363981.nii' #'./input/pre/FLAIR.nii.gz'#sys.argv[1] #absolute path of the flair image.
+FLAIR_image = 'mrPPMI_3664_MR_AX_FLAIR_br_raw_20130321141116659_8_S184906_I363980.nii'#'./input/pre/T1.nii.gz'#sys.argv[2] #absolute path of the t1 image.
+    
+model_path = './sample_data/Parkison-s-disease-/models/unet2/unet2.h5'
+MASK_image =  'M_3664.nii.gz' 
+MASK_folder =  '/content/media/MascaraBinaria' 
+generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image,MASK_folder)
 '''
-def generateMaskTwoArgument(FLAIR_image_path, T1_image_path, model_path, output_path):
+def generateMaskTwoArgument(FLAIR_image_path, T1_image_path, model_path, output_path,pathFolderfinal):
 
     FLAIR_image = sitk.ReadImage(FLAIR_image_path)
     FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
@@ -135,7 +143,8 @@ def generateMaskTwoArgument(FLAIR_image_path, T1_image_path, model_path, output_
       v = mask_new.GetMetaData(k)
       print("({0}) = = \"{1}\"".format(k,v))
     print("Fin------------------------------------------------------------->")
-    sitk.WriteImage(mask_new, output_path )
+    final_output_path=pathFolderfinal+output_path
+    sitk.WriteImage(mask_new, final_output_path )
 
 def mask_X_size(file):
     image_path = sitk.ReadImage(file)
@@ -176,6 +185,29 @@ def get_crop_shape(target, refer):
         ch1, ch2 = int(ch/2), int(ch/2)
 
     return (ch1, ch2), (cw1, cw2)
+
+'''
+Generar mascara usando como referencia image MRI Flair y mascara binaria
+Ej:getMascaraIntensidad('/content/mrESANDI_ITOIZ_JUAN_JOSE_t2_tirm_TRA_dark-fluid_3mm_20110524164030_9.nii.gz','/content/mjuanjose.nii','/content/media/MascarasIntensidades')
+'''
+def getMascaraIntensidad(Flair,MaskB,pathFolderfinal)
+  FLAIR_image_path = Flair  
+  MASK_image_path =  MaskB
+
+  FLAIR_image = sitk.ReadImage(FLAIR_image_path,sitk.sitkInt32)
+  MASK_image = sitk.ReadImage(MASK_image_path,sitk.sitkInt32)
+  FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
+  MASK_array = sitk.GetArrayFromImage(MASK_image)
+  dotProduct = np.multiply(FLAIR_array,MASK_array)
+  mask_new = sitk.GetImageFromArray(dotProduct)
+  mask_new.CopyInformation(FLAIR_image)
+  #print("Inicio------------------------------------------------------------->")
+  for k in FLAIR_image.GetMetaDataKeys():
+    v = FLAIR_image.GetMetaData(k)
+    mask_new.SetMetaData(k,v)
+    #print("({0}) = = \"{1}\"".format(k,v))
+  filename_resultImage = pathFolderfinal+"ProductP" + MASK_image_path
+  sitk.WriteImage(mask_new, filename_resultImage )
 
 #post procesamiento Flair generacion de mascara
 def general_postprocessing(FLAIR_array, pred):
