@@ -7,6 +7,11 @@ from keras.preprocessing.image import img_to_array
 from keras.models import Sequential
 import numpy as np
 from keras.applications.vgg16 import preprocess_input
+from keras.applications.vgg19 import VGG19
+from keras.models import Model
+from keras.layers import Dense
+from keras.layers import Flatten
+from keras.optimizers import SGD
 import med2image
 import SimpleITK as sitk
 
@@ -44,6 +49,24 @@ def changedim(Img):
           cover = resizeimage.resize_cover(image, [256, 192])
           cover.save(Img, image.format)
 
+
+# definición del modelo
+def define_model():
+    # cargar modelo
+    model = VGG19(include_top=False, input_shape=( 192,256, 3))
+    # indicar a las capas no entrenar
+    for layer in model.layers:
+        layer.trainable = False
+    # añadir mi clasificador: una nn de 1 capa full con 128 neuronas
+    flat1 = Flatten()(model.layers[-1].output)
+    class1 = Dense(128, activation='relu', kernel_initializer='he_uniform')(flat1)
+    output = Dense(1, activation='sigmoid')(class1)
+    # definición del nuevo modelo
+    model = Model(inputs=model.inputs, outputs=output)
+    # compilar modelo
+    opt = SGD(lr=0.001, momentum=0.9)
+    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+    return model
 
 '''
 Funcion que retorna verdadero o falso para imagen del cerebro JPG usando un modelo predefinido
