@@ -3,6 +3,8 @@ import os
 import sys
 import time
 import numpy as np
+import dicom2nifti
+import dicom2nifti.settings as settings
 import warnings
 import scipy
 import tensorflow as tf
@@ -527,4 +529,15 @@ def getMascaraIntensidad(Flair,MaskB,pathFolderfinal)
   filename_resultImage = pathFolderfinal+"ProductP" + MASK_image_path
   sitk.WriteImage(mask_new, filename_resultImage )
 
-
+'''
+Funcion que convierte un folder que contiene imagenes dicom en un solo archivo nii
+Ej:dcm2nii("/content/dcm","/content/nii")
+por lo general se crea un nombre automatico del archivo
+'''
+def dcm2nii(Pathdcmfiles,PathoutputFolder):
+  try:
+    dicom2nifti.convert_directory(Pathdcmfiles,PathoutputFolder, compression=True, reorient=True)
+    return 1
+  except:
+    #print("An exception occurred")
+    return -1
