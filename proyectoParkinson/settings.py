@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.TablaCaracteristicas',
     'apps.Overlay',
     'apps.Diagnostico',
+    'apps.Archivo',
 ]
 
 MIDDLEWARE = [
@@ -132,7 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = "/home/Jacelly/AgendCitas/static"
+STATIC_ROOT = "/home/Jacelly/as/static"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),) #Le decimos a django el directorio de nuestros archivos estaticos

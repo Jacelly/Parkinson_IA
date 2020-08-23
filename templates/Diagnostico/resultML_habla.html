@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<!--<div class="well well-xl">
+<form method="post" action=''enctype="multipart/form-data" >
+	{% csrf_token %}
+	{{ form.as_p }}
+
+	<button type="submit">Agregar</button>
+</form>
+</div>-->
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+        <meta charset="UTF-8">
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    </head>
+	<body class="body">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="content-Tablas">
+						
+						<div class="content-titulos">
+							<div class="close"  style="color:black;">x</div>
+							<h1><b> Precisiones de los Modelos de ML</b></h1>
+						</div>
+						<table class="table table-bordered">
+							<thead>
+								<tr >
+									<td>Nombre del Modelo</td>
+									<td>Precisión media (%)</td>
+									<td>Precisión desviación estandar (%)</td>
+								</tr>	
+							</thead>
+							<tbody  class="content-filas">
+								{% if data %}
+								{% for i,j,k in data %}
+								<tr>
+
+									<td>{{ i }}</td>
+									<td>{{ j|floatformat:2 }}</td>
+									<td>{{ k|floatformat:2 }}</td>			
+								</tr>
+								{% endfor %}
+								
+								{% else %}
+								<h1>No hay datos que mostrar!</h1>
+								{% endif %}
+							</tbody>
+						</table> 
+			</div>
+		</div>
+
+   </body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
+	});
+</script>
+
+{% endblock %}

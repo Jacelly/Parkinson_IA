@@ -1,0 +1,61 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<!--<div class="well well-xl">
+<form method="post" action=''enctype="multipart/form-data" >
+	{% csrf_token %}
+	{{ form.as_p }}
+
+	<button type="submit">Agregar</button>
+</form>
+</div>-->
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+        <meta charset="UTF-8">
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    </head>
+	<body class="body">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="content-Tablas">
+                    <div class="content-titulos">
+                        <div class="close"  style="color:black;">x</div>
+                        <h1><b> Diagnóstico de EP por MRI</b></h1>
+ 
+                    </div>
+                    <div class="card">
+                            <div class="card-body card-block">
+                                <form action="{% url 'diagnoticoPorMRI' %}" method="get" class="form-horizontal">
+                                    <div class="row form-group">
+                                        <div class="col col-md-12">
+                                            <div class="input-group">
+                                                <div class="input-group-btn content-titulos">
+                                                    <button class="btn btn-primary">Diagnosticar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                    </div>
+
+                </div>       
+			</div>
+		</div>
+
+   </body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
+	});
+</script>
+
+{% endblock %}

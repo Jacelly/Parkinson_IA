@@ -19,6 +19,8 @@ from django.urls import path,include
 from django.contrib.auth.views import logout_then_login,LoginView
 from django.contrib.auth import views as auth_views
 from apps.Usuario import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +31,8 @@ urlpatterns = [
     path('tablaFeatures/', include('apps.TablaCaracteristicas.urls'), name='tablaFeatures'),
     path('user/', include('apps.Usuario.urls'), name='user'),
     path('doctor/', include('apps.Doctor.urls'), name='doctor'),
+    path('Archivo/',include('apps.Archivo.urls'), name='archivo'),
+    path('Diagnostico/',include('apps.Diagnostico.urls'), name='diagnostico'),
 
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', logout_then_login, name="logout"),
@@ -36,3 +40,5 @@ urlpatterns = [
     path('home_administrador/', views.home_administrador, name="home_administrador"),
     path('home_doctor/', views.home_doctor, name="home_doctor"),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -341,7 +341,7 @@
           datasets: [
             {
               label: "My First dataset",
-              data: [60, 40],
+              data: [80, 20],
               backgroundColor: [
                 '#00b5e9',
                 '#fa4251'
@@ -360,8 +360,8 @@
             }
           ],
           labels: [
-            'Products',
-            'Services'
+            'EP',
+            'Sano'
           ]
         },
         options: {

@@ -1,0 +1,78 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<!--<div class="well well-xl">
+<form method="post" action=''enctype="multipart/form-data" >
+	{% csrf_token %}
+	{{ form.as_p }}
+
+	<button type="submit">Agregar</button>
+</form>
+</div>-->
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+        <meta charset="UTF-8">
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    </head>
+	<body class="body">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				{% if object == false %}
+					{% csrf_token %}
+	                <form role="form" enctype="multipart/form-data" action="{% url 'MriRegister'%}" method="post">
+                {% endif %}
+				<form class="centrar-form " enctype="multipart/form-data" method="post">
+					{% csrf_token %}
+					<div class="col-sm-12" class="form-group">
+						<div class="content-titulos">
+	                        <div class="close"  style="color:black;">x</div>
+	                        <h1><b>AGREGAR IMAGEN MRI<b></h1>
+						</div>
+						<div class="content-filas">
+								<p><b>*Nota:</b> Registar datos del cliente primero, antes de ingresar la imagen MRI.</p>
+						</div>
+                        <div  class="col-sm-12" id="imagen">
+                            <label for="{{form2.imagen.name}}">{{form2.imagen.label}}</label>
+                            {{form2.imagen}}
+                        </div>
+                        <div  class="col-sm-12" id="ide_sujeto">
+                        	
+                            <label  style= "width:100%;" for="{{form2.id_sujeto.name}}">{{form2.id_sujeto.label}}</label>
+                            {{form2.id_sujeto}}
+                        </div>
+						<div class="col-sm-12">
+
+							<label  style= "width:100%;" for="{{form2.tipo.name}}">{{form2.tipo.label}}</label>
+                        	{{form2.tipo}}
+						</div>
+                        <div class="col-sm-12">
+	                         <label for="{{form2.descripcion.name}}">{{form2.descripcion.label}}</label>
+	                        {{form2.descripcion}}
+                        </div>
+                        </div>
+						<div class="col-md-10 col-md-offset-1">
+							<div class="form-group" style="text-align:center;">
+								<br><button class="btn btn-primary "type="submit">Guardar</button></br>
+							</div>
+						</div>
+					
+					</div>
+
+				</form>
+			</div>
+		</div>
+
+   </body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
+	});
+</script>
+{% endblock %}

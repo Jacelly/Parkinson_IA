@@ -1,10 +1,36 @@
-from django.shortcuts import render
+#Dependecias de Django
+from django.shortcuts import render, redirect
+from apps.Archivo.models import CSV
+#Dependecias utiles para logica de nuestro modelo de clasificacion
+import csv
+import numpy as np
+from numpy import mean
+from numpy import std
+from sklearn.preprocessing import normalize
+from sklearn.model_selection import train_test_split
+
+from pandas import read_csv,DataFrame,read_excel
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import PowerTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedStratifiedKFold
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+#from sklearn.externals import joblib
+import joblib
+#Dependencias utiles para logica de modelo de segmentacion U-net
 import os
 import sys
 import time
-import numpy as np
-import dicom2nifti
-import dicom2nifti.settings as settings
 import warnings
 import scipy
 import tensorflow as tf
@@ -14,13 +40,14 @@ from keras.layers.merge import concatenate
 from keras.optimizers import Adam, SGD
 from keras.callbacks import ModelCheckpoint
 from keras import backend as K
+import dicom2nifti
+import dicom2nifti.settings as settings
 #from keras.preprocessing.image import apply_transform, transform_matrix_offset_center
 from PIL import Image
 from resizeimage import resizeimage
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras.models import Sequential, Model
-import numpy as np
 from keras.applications.vgg16 import preprocess_input
 from keras.applications.vgg19 import VGG19
 import med2image
@@ -510,7 +537,7 @@ def generateMaskTwoArgument(FLAIR_image_path, T1_image_path, model_path, output_
 Generar mascara usando como referencia image MRI Flair y mascara binaria
 Ej:getMascaraIntensidad('/content/mrESANDI_ITOIZ_JUAN_JOSE_t2_tirm_TRA_dark-fluid_3mm_20110524164030_9.nii.gz','/content/mjuanjose.nii','/content/media/MascarasIntensidades')
 '''
-def getMascaraIntensidad(Flair,MaskB,pathFolderfinal)
+def getMascaraIntensidad(Flair,MaskB,pathFolderfinal):
   FLAIR_image_path = Flair  
   MASK_image_path =  MaskB
 
@@ -541,3 +568,156 @@ def dcm2nii(Pathdcmfiles,PathoutputFolder):
   except:
     #print("An exception occurred")
     return -1
+#**************************************************MODELOS DE CLASIFICACION ML*****************************************
+# cargar la base
+def load_dataset(full_path):
+    # cargar como numpy array
+    data = read_csv(full_path, header=None)
+    data = data.values
+    # split input - output 
+    X, y = data[2:, :-1], data[2:, -1]
+    # clases 0 y 1
+    y = LabelEncoder().fit_transform(y)
+    return X, y
+# evaluar el modelo
+def evaluate_model(X, y, model):
+    # procedimiento de evaluación
+    cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=3, random_state=1)
+    # evaluar modelo
+    scores = cross_val_score(model, X, y, scoring='roc_auc', cv=cv, n_jobs=-1)
+    
+    return scores
+
+# definir modelos a probar
+def get_models():
+    models, names = list(), list()
+    # Regresión Logística
+    models.append(LogisticRegression(solver='lbfgs', class_weight='balanced'))
+    names.append('LR')
+    # SVM
+    models.append(SVC(gamma="scale", class_weight='balanced'))
+    names.append('SVM')
+    # Random Forest
+    models.append(RandomForestClassifier(n_estimators=1000))
+    names.append('RF')
+    #Naive Bayes
+    models.append(GaussianNB())
+    names.append("NB")
+    #Arbol de decisiones
+    models.append(DecisionTreeClassifier(criterion='entropy'))
+    names.append("DT")
+    #K vecinos
+    models.append(KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2))
+    names.append("KN")
+    return models, names
+#Evaluando modelo en entrenamiento
+def medirPresicionScoresModelos(X,y):
+    # definir modelos
+    models, names = get_models()
+    results = list()
+    namesEnd = list()
+    resultsEnd = list()
+    resultsEnd1 = list()
+    # evaluar cada modelo
+    for i in range(len(models)):
+        scores = evaluate_model(X, y, models[i])
+        results.append(scores)
+        namesEnd.append(names[i])
+        resultsEnd.append(mean(scores))
+        resultsEnd1.append(std(scores))
+        # resumen
+        #print('>%s %.3f (%.3f)' % (names[i], mean(scores), std(scores)))
+    return namesEnd,resultsEnd,resultsEnd1
+#Separando el target (y) y data(X) del archivo CSV
+def SeparaDataCsv(pathFull): 
+    X,y=load_dataset(pathFull) 
+    #NORMALIZO LA DATA
+    X = normalize(X, axis=0)
+    return X,y
+#Guardando el mejor modelo de ML para clasificacion de PD
+def guardarMejorModeloML(fileNameModeloSavePKL):
+      # definir modelos
+      models, names = get_models()
+      resultsEnd = list()
+      # evaluar cada modelo
+      for i in range(len(models)):
+          scores = evaluate_model(X, y, models[i])
+          resultsEnd.append(mean(scores))
+      #Separo los datos de "train" en entrenamiento y prueba para probar el algoritmo de Regresion Logistica
+      X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2)
+      #Se escalan todos los datos
+      escalar = StandardScaler()
+      X_train = escalar.fit_transform(X_train)
+      X_test = escalar.transform(X_test)
+      y_pred = 0.0
+      algoritmo=""
+      for i in range(len(resultsEnd)):
+        if(resultsEnd[i]==max(resultsEnd)):
+          algoritmo=models[i]
+          print(models[i])
+          #Entreno el modelo
+          algoritmo.fit(X_train,y_train)
+          #Realizo una prediccion
+          y_pred=algoritmo.predict(X_test)
+          print('test:',y_test)
+          print('Prediccion:',y_pred)
+          #joblib.dump(algoritmo,fileNameModeloSavePKL)
+#Diagnostico PD mediante datos de caracteristicas de archivo CSV
+def diagnosticoFinalPD(listFeaturesToPredict):
+  listaDataFeatures=listFeaturesToPredict.split('","') #lista de string separado por ","
+  strLista=" ".join(listaDataFeatures)#Unimos los lementos de la lista por vacio
+  strLista=strLista.replace('"',' ') #reemplazamos la comilla " por espacio vacio
+  listaDataFeatures=strLista.split(' ') #obtenemos una nueva lista separada por vacios
+  listaDataFeatures.pop(0) #se elimina el primer elemento de la lista porque es un espacio vacio
+  listaDataFeatures.pop(-1) #se elimina el ultimo elemento de la lista porque es un espacio vacio
+  listaDataFeatures2=[listaDataFeatures]#Lista de lista de datos de las features
+  #print(listaDataFeatures2)
+  clf_from_joblib=joblib.load('media/models/ClasificadorPDHabla_202.pkl')
+  pred2=clf_from_joblib.predict(listaDataFeatures2)
+  #print(pred2)
+  #print(clf_from_joblib.predict_proba(listaDataFeatures2))
+  porcentajeH=clf_from_joblib.predict_proba(listaDataFeatures2)[0,0]
+  #print(porcentajeH)
+  porcentajePD=clf_from_joblib.predict_proba(listaDataFeatures2)[0,1]
+  #print(porcentajePD)
+
+  return str(round(porcentajePD, 2)*100) + "%" ,str(round(porcentajeH,2)*100) + "%"
+#View para calcular las precisiones de los modelos de ML para la clasificacion
+def precisionesCsv_Habla(request):
+    instanciaCsv=CSV.objects.last()
+    path="media/"+str(instanciaCsv.documento)
+    X,y=SeparaDataCsv(path)
+    names,results,results1=medirPresicionScoresModelos(X,y)
+    if request.method == 'GET':       
+        return render(request, 'Diagnostico/resultML_habla.html',{'data':zip(names,results, results1)}) 
+    return redirect('home_administrador')
+#View para ingresar data para diagnosticar PD con el modelo de clasifcicacion de ML
+def pruebasMLCsv_Habla(request):
+    if request.method == 'GET':       
+        return render(request, 'Diagnostico/IngresoDataToValid.html') 
+    return redirect('home_administrador')
+#View para calcular el diagnostico de PD
+def diagnoticoPorCsv_Habla(request):
+    #path="media/models/ClasificadorPDHabla.pkl"
+    #NameModel="ClasificadorPDHabla.pkl"
+    global q
+    q = request.GET.get('q','')
+    #print('INICIO',q,'FIN')
+    diagnostico1,diagnostico2=diagnosticoFinalPD(q)
+    diagnosticoFinalPD(q)
+    if request.method == 'GET': 
+        print(diagnostico1)
+        print(diagnostico2)       
+        return render(request, 'Diagnostico/diagnosticoHabla.html',{'data1':diagnostico1,'data2':diagnostico2}) 
+    return redirect('home_administrador')
+
+#View para barra de carga, simulando todo el tiempo que tarda en dar el modelo un diagnostico
+def barraCargaModeloDiagPorMRI(request):
+    if request.method == 'GET':    
+        return render(request, 'Diagnostico/barraCargaDiagPD.html') 
+    return redirect('home_administrador')
+#View para calcular el diagnostico de PD por MRI
+def diagnoticoPorMRI(request):
+    if request.method == 'GET':      
+        return render(request, 'Diagnostico/diagnosticoPD_MRI.html') 
+    return redirect('home_administrador')

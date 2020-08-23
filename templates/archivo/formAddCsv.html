@@ -1,0 +1,70 @@
+
+{% load static %}
+<!doctype html>
+{% block content %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+
+    </head>
+       
+    <body class="body">
+    	<div class="modal-dialog modal-lg">
+    		
+    			<div class="modal-content">
+                    {% if object == false %}
+                        <form enctype=multipart/form-data role="form" action="{% url 'documento_agregar'%}" method="post">
+                    {% endif %}
+					<form enctype="multipart/form-data" method="post">
+						{% csrf_token %}
+						<div class="col-sm-12" class="form-group">
+							
+							<div class="content-titulos">
+								<div class="close" style="color:black;">x</div>
+								<h1><b> AGREGAR DOCUMENTO CSV</b></h1>
+							</div>
+							<div class="content-filas">
+								<p><b>*Nota:</b> Subir archivo CSV con cantidad de caracteristicas mayor o igual a 9, y de 100 datos en adelante.</p>
+							</div>
+							<div class="col-sm-12">
+								<label for="{{form.titulo.name}}">{{form.titulo.label}}</label>
+                            	{{form.titulo}}
+							</div>
+                            <div class="col-sm-12">
+                                 <label for="{{form.descripcion.name}}">{{form.descripcion.label}}</label>
+                                {{form.descripcion}}
+                            </div>
+                            <div  class="col-sm-12" id="id_doctorr">
+                                <label for="{{form.documento.name}}">{{form.documento.label}}</label>
+                                {{form.documento}}
+                            </div>
+
+							<div class="col-sm-12 col-md-offset-0">
+								<div class="form-group" style="text-align:center;">
+									<br><button class="btn btn-primary "type="submit">Agregar</button>
+								</div>
+							</div>
+						
+						</div>
+						
+					</form>
+
+				</div>
+    	</div>
+
+		
+	</body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
+	});
+</script>
+
+{% endblock%}

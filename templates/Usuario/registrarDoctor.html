@@ -84,7 +84,8 @@
 	document.querySelector('.close').addEventListener('click',
 	function(){
 		document.querySelector('.modal-content').style.display='none';
-		location.href ='/home_administrador/';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
 	});
 </script>
 {% endblock %}
