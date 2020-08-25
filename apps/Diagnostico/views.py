@@ -3,6 +3,9 @@ from django.shortcuts import render, redirect
 from apps.Archivo.models import CSV
 import math
 from tqdm.auto import tqdm
+from django.views.generic import ListView,CreateView,UpdateView,DeleteView,TemplateView
+from django.urls import reverse_lazy
+
 from apps.ImagenMRI.models import ImagenMRI
 from apps.Sujeto.models import Sujeto
 from apps.ImagenMascara.models import ImagenMascara
@@ -829,15 +832,45 @@ def diagnoticoPorMRI(request):
         if(Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).exists()==False):
             
             Overlay.objects.create(imagen=PathNameImageOverlay_SaveTable,id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask)
-        
-        TablaCaracteristicas.objects.create(nombrePaciente=listFeaturesToPredict[0],curtosisI=listFeaturesToPredict[1],redondezI=listFeaturesToPredict[2],
-        perimetroI=listFeaturesToPredict[3],varianzaI=listFeaturesToPredict[4],desviEstandI=listFeaturesToPredict[5],volumenF=listFeaturesToPredict[6],enlogacionF=listFeaturesToPredict[7],flagnessF=listFeaturesToPredict[8],cantidad=listFeaturesToPredict[9],
-        id_sujeto=instanciaSujeto,id_mask=instanciaMask)
+        print(TablaCaracteristicas.objects.filter(curtosisI=listFeaturesToPredict[1]).exists(),
+            TablaCaracteristicas.objects.filter(redondezI=listFeaturesToPredict[2]).exists(),
+            TablaCaracteristicas.objects.filter(perimetroI=listFeaturesToPredict[3]).exists(),
+            TablaCaracteristicas.objects.filter(varianzaI=listFeaturesToPredict[4]).exists(),
+            TablaCaracteristicas.objects.filter(desviEstandI=listFeaturesToPredict[5]).exists(),
+            TablaCaracteristicas.objects.filter(volumenF=listFeaturesToPredict[6]).exists(),
+            TablaCaracteristicas.objects.filter(enlogacionF=listFeaturesToPredict[7]).exists(),
+            TablaCaracteristicas.objects.filter(flagnessF=listFeaturesToPredict[8]).exists())
+
+        if((TablaCaracteristicas.objects.filter(curtosisI=listFeaturesToPredict[1]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(redondezI=listFeaturesToPredict[2]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(perimetroI=listFeaturesToPredict[3]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(varianzaI=listFeaturesToPredict[4]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(desviEstandI=listFeaturesToPredict[5]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(volumenF=listFeaturesToPredict[6]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(enlogacionF=listFeaturesToPredict[7]).exists()==False) and
+            (TablaCaracteristicas.objects.filter(flagnessF=listFeaturesToPredict[8]).exists()==False)):
+
+            TablaCaracteristicas.objects.create(nombrePaciente=listFeaturesToPredict[0],curtosisI=listFeaturesToPredict[1],redondezI=listFeaturesToPredict[2],
+            perimetroI=listFeaturesToPredict[3],varianzaI=listFeaturesToPredict[4],desviEstandI=listFeaturesToPredict[5],volumenF=listFeaturesToPredict[6],enlogacionF=listFeaturesToPredict[7],flagnessF=listFeaturesToPredict[8],cantidad=listFeaturesToPredict[9],
+            id_sujeto=instanciaSujeto,id_mask=instanciaMask)
 
         instanciaOverlay=Overlay.objects.last()
         instanciaTablaC=TablaCaracteristicas.objects.last()
-        Diagnostico.objects.create(id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask,id_overlay=instanciaOverlay,id_sujeto=instanciaSujeto,id_tablaC=instanciaTablaC,porcentPD=diagnosticoPD,porcentNoPD=diagnosticoSano)
+        if((Diagnostico.objects.filter(id_mri=instanciaUltimaFLAIR).exists()==False) and
+        (Diagnostico.objects.filter(id_mask=instanciaMask).exists()==False) and
+        (Diagnostico.objects.filter(id_overlay=instanciaOverlay).exists()==False) and
+        (Diagnostico.objects.filter(id_sujeto=instanciaSujeto).exists()==False) and
+        (Diagnostico.objects.filter(id_tablaC=instanciaTablaC).exists()==False)):
+
+            Diagnostico.objects.create(id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask,id_overlay=instanciaOverlay,id_sujeto=instanciaSujeto,id_tablaC=instanciaTablaC,porcentPD=diagnosticoPD,porcentNoPD=diagnosticoSano)
         #print(listFeaturesToPredict[0],listFeaturesToPredict[1],listFeaturesToPredict[2],listFeaturesToPredict[3],listFeaturesToPredict[4],listFeaturesToPredict[5],listFeaturesToPredict[6],listFeaturesToPredict[7],listFeaturesToPredict[8],listFeaturesToPredict[9])
         
         return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
     return redirect('home_administrador')
+
+#View para mostrar lista de diagnosticos realizados
+class DiagnosticoDisponible(ListView):
+    model = Diagnostico
+    template_name = 'Diagnostico/listaDiagnosticoDispo.html'
+    success_url = reverse_lazy('tratamiento_disponible')
+    paginate_by=5

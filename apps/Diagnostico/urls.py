@@ -8,4 +8,6 @@ urlpatterns = [
 	path('pruebasMLCsv_Habla/', views.pruebasMLCsv_Habla, name='pruebasMLCsv_Habla'),
 	path('barraCargaModeloDiagPorMRI', views.barraCargaModeloDiagPorMRI, name='barraCargaModeloDiagPorMRI'),
 	path('diagnoticoPorMRI', views.diagnoticoPorMRI, name='diagnoticoPorMRI'),
+
+	path('disponible/', views.DiagnosticoDisponible.as_view(), name='diagnostico_disponible'),
 ]
