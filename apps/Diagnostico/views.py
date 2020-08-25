@@ -1,9 +1,15 @@
 #Dependecias de Django
 from django.shortcuts import render, redirect
 from apps.Archivo.models import CSV
+import math
+from tqdm.auto import tqdm
 from apps.ImagenMRI.models import ImagenMRI
 from apps.Sujeto.models import Sujeto
-import math
+from apps.ImagenMascara.models import ImagenMascara
+from apps.Overlay.models import Overlay
+from apps.TablaCaracteristicas.models import TablaCaracteristicas
+from apps.Diagnostico.models import Diagnostico
+
 #Dependecias utiles para logica de nuestro modelo de clasificacion
 import csv
 import numpy as np
@@ -786,6 +792,7 @@ def diagnoticoPorMRI(request):
     diagnosticoPD = 0
     diagnosticoSano = 0
     if request.method == 'GET': 
+        
         instanciaUltimaT1=ImagenMRI.objects.filter(tipo='T1').last()
         instanciaUltimaFLAIR=ImagenMRI.objects.filter(tipo='FLAIR').last()
         instanciaSujeto=Sujeto.objects.get(id_sujeto=instanciaUltimaT1.id_sujeto_id)
@@ -811,5 +818,26 @@ def diagnoticoPorMRI(request):
         getOverlay(FLAIR_image,Final_MASK_image_path,PathNameImageOverlay)
         print(diagnosticoPD)
         print(diagnosticoSano)
+        Final_MASK_image_path_SaveTable='/ImagenesMascaras/Product_'+MASK_image_Name
+        PathNameImageOverlay_SaveTable='/ImagenesOverlay/Overlay_'+MASK_image_Name
+        #Guardamos en las respectivas tablas de la BD la infor de todo el proceso realizado
+        print(ImagenMascara.objects.filter(imagen=Final_MASK_image_path_SaveTable).exists())
+        print(Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).exists())
+        instanciaMask=ImagenMascara.objects.last()
+        if(ImagenMascara.objects.filter(imagen=Final_MASK_image_path_SaveTable).exists()==False):
+            ImagenMascara.objects.create(imagen=Final_MASK_image_path_SaveTable)
+        if(Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).exists()==False):
+            
+            Overlay.objects.create(imagen=PathNameImageOverlay_SaveTable,id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask)
+        
+        TablaCaracteristicas.objects.create(nombrePaciente=listFeaturesToPredict[0],curtosisI=listFeaturesToPredict[1],redondezI=listFeaturesToPredict[2],
+        perimetroI=listFeaturesToPredict[3],varianzaI=listFeaturesToPredict[4],desviEstandI=listFeaturesToPredict[5],volumenF=listFeaturesToPredict[6],enlogacionF=listFeaturesToPredict[7],flagnessF=listFeaturesToPredict[8],cantidad=listFeaturesToPredict[9],
+        id_sujeto=instanciaSujeto,id_mask=instanciaMask)
+
+        instanciaOverlay=Overlay.objects.last()
+        instanciaTablaC=TablaCaracteristicas.objects.last()
+        Diagnostico.objects.create(id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask,id_overlay=instanciaOverlay,id_sujeto=instanciaSujeto,id_tablaC=instanciaTablaC,porcentPD=diagnosticoPD,porcentNoPD=diagnosticoSano)
+        #print(listFeaturesToPredict[0],listFeaturesToPredict[1],listFeaturesToPredict[2],listFeaturesToPredict[3],listFeaturesToPredict[4],listFeaturesToPredict[5],listFeaturesToPredict[6],listFeaturesToPredict[7],listFeaturesToPredict[8],listFeaturesToPredict[9])
+        
         return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
     return redirect('home_administrador')

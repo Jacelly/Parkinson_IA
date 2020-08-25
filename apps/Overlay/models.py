@@ -10,4 +10,4 @@ class Overlay(models.Model):
     id_mri = models.ForeignKey(ImagenMRI,null=True,blank=True,on_delete=models.CASCADE)
     id_mask = models.ForeignKey(ImagenMascara,null=True,blank=True,on_delete=models.CASCADE,default="Ninguna")
     def __str__(self):
-        return '{}'.format(self.nombre)
+        return '{}'.format(self.imagen)

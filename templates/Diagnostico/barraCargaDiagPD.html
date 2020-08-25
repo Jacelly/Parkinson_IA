@@ -14,6 +14,7 @@
     	<meta charset="UTF-8">
         <meta charset="UTF-8">
         <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <!--<link rel="stylesheet"type="text/css"  href="{% static 'css/templates/pace-theme-mac-osx.tmpl.css' %}"/>-->
         <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
         <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     </head>
@@ -31,9 +32,16 @@
                                 <form action="{% url 'diagnoticoPorMRI' %}" method="get" class="form-horizontal">
                                     <div class="row form-group">
                                         <div class="col col-md-12">
+                                            <div id="myimageDiv" style="display:none"> 
+                                                <img src="{% static 'imagenes/barra_load1.gif' %}" alt="load image">
+                                            </div>
+                                            <div id="myimageDiv1" style="display:inline"> 
+                                                <img src="{% static 'imagenes/barra_load1_1.png' %}" alt="ceroimage">
+                                            </div>
                                             <div class="input-group">
+
                                                 <div class="input-group-btn content-titulos">
-                                                    <button class="btn btn-primary">Diagnosticar</button>
+                                                    <button class="btn btn-primary" onclick="showHide()" >Diagnosticar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -57,5 +65,20 @@
 		//location.href ='/home_administrador/';
 	});
 </script>
+
+{% block extrajs %}
+<!--<script src={% static 'js/pace.min.js' %}></script>-->
+<script type="text/javascript"> 
+    function showHide(){ 
+        var oImageDiv=document.getElementById('myimageDiv') 
+        var oImageDiv1=document.getElementById('myimageDiv1') 
+
+        oImageDiv.style.display=(oImageDiv.style.display=='none')?'inline':'none'
+        oImageDiv1.style.display=(oImageDiv.style.display=='inline')?'none':'inline'
+    } 
+
+</script>
+
+{% endblock %}
 
 {% endblock %}
