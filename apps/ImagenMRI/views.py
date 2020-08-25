@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from apps.ImagenMRI.forms import MRIForm
 from django.contrib import messages
+#from apps.Diagnostico.views import generateMaskTwoArgument,getMascaraIntensidad
 # Create your views here.
 #def SujetoRegister(request):
 #   if request.method == 'POST':

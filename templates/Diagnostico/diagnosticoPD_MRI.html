@@ -42,11 +42,6 @@
 
     <title>BRAINJE</title>
 
-    <script>
-    var params = [];
-    params["encodedImages"] = ["{% static 'data/OVERLAY_EsantiJuanJose.nii'%}"];
-    params ["images"]  = ["{% static 'data/OVERLAY_EsantiJuanJose.nii'%}"];
-    </script>
 
     {% endblock %}
 
@@ -115,10 +110,7 @@
                                     <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Nuevas Imagenes</a>
-                                </li>
-                                <li>
-                                    <a href="#">Nuevo Modelo</a>
+                                    <a href="#">Lista de Diagnóstico</a>
                                 </li>
                                 <li>
                                     <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
@@ -179,10 +171,7 @@
                                     <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Nuevas Imagenes</a>
-                                </li>
-                                <li>
-                                    <a href="#">Nuevo Modelo</a>
+                                    <a href="#">Lista de Diagnóstico</a>
                                 </li>
                                 <!--<li>
                                     <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Diagnóstico de EP por Habla</a>
@@ -270,14 +259,29 @@
                                                 <div class="row no-gutters">
                                                     <div class="col-xl-2">
                                                         <div class="chart-note-wrap">
+                                                            {% if data1PD %}
                                                             <div class="chart-note mr-0 d-block">
                                                                 <span class="dot dot--blue"></span>
-                                                                <span>EP</span>
+                                                                <span><b>EP:</b> </span>
+                                                                <span>{{data1PD}}</span>
                                                             </div>
                                                             <div class="chart-note mr-0 d-block">
                                                                 <span class="dot dot--red"></span>
-                                                                <span>NO EP</span>
+                                                                <span><b>NO EP:</b>  </span>
+                                                                <span>{{data2Sano}}</span>
                                                             </div>
+                                                            {% else %}
+                                                            <div class="chart-note mr-0 d-block">
+                                                                <span class="dot dot--blue"></span>
+                                                                <span><b>EP:</b> </span>
+                                                                <span>--</span>
+                                                            </div>
+                                                            <div class="chart-note mr-0 d-block">
+                                                                <span class="dot dot--red"></span>
+                                                                <span><b>NO EP:</b>  </span>
+                                                                <span>--</span>
+                                                            </div>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                     <!--<div class="col-xl-10">
@@ -301,49 +305,21 @@
                                         <div class="table-responsive m-b-40">
                                             <table class="table table-top-campaign">
                                                 <tbody>
-                                                    <tr>
-                                                        <td>1. Kurtosis</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2. Área</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3. Redondez</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>4. Perimetro</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>5. Varianza</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>6. Desviación Estándar</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>7. Enlongación</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>8. Flatness</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>9. Volumen</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>10. Cantidad</td>
-                                                        <td>---</td>
-                                                    </tr>
+                                                    {% if listFeaturesToPredict %}
+                                                        {% for feature,nameCols in listFeaturesToPredict %}
+                                                            <tr>
+                                                                <td>{{ nameCols }}</td>
+                                                                <td>{{ feature }}</td>
+                                                                <!--<td>{{ feature|floatformat:4 }}</td>-->
+                                                            </tr>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <h1>No hay datos disponibles</h1>
+                                                    {% endif %}
                                                 </tbody>
                                             </table>
                                         </div>
+
                                     </div>
                                     <!-- END DATA TABLE-->
                                 
@@ -362,6 +338,18 @@
     <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
     </div>
+    {% if listFeaturesToPredict %}
+        <script>
+        var params = [];
+        var pathImageOverlay = '/{{Overlay_image}}';
+        console.log(pathImageOverlay);
+        params["encodedImages"] = [pathImageOverlay];
+        params ["images"]  = [pathImageOverlay];
+        </script>
+    {% else %}
+        <h1>No hay datos disponibles</h1>
+    {% endif %}
+
 </body>
 
 </html>

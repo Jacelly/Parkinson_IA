@@ -4,13 +4,13 @@ from model_utils import Choices
 # Create your models here.
 class ImagenMRI(models.Model):
     TIPOS = Choices(
-        ('T', 'T1'),
-        ('F', 'FLAIR'),
+        ('T1', 'T1'),
+        ('FLAIR', 'FLAIR'),
     )
     id_mri = models.AutoField(primary_key=True)
     imagen = models.FileField(upload_to='ImagenesMRI/',blank=True, null=True)
     #nombre = models.CharField(max_length=30)
-    tipo = models.CharField(max_length=1,choices=TIPOS)
+    tipo = models.CharField(max_length=5,choices=TIPOS)
     #tamanio = models.CharField(max_length=20)
     id_sujeto = models.ForeignKey(Sujeto,null=True,blank=True,on_delete=models.CASCADE)
     descripcion = models.CharField(max_length=150,null=False, blank=False,default="Ninguna")

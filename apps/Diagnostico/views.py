@@ -1,11 +1,15 @@
 #Dependecias de Django
 from django.shortcuts import render, redirect
 from apps.Archivo.models import CSV
+from apps.ImagenMRI.models import ImagenMRI
+from apps.Sujeto.models import Sujeto
+import math
 #Dependecias utiles para logica de nuestro modelo de clasificacion
 import csv
 import numpy as np
 from numpy import mean
 from numpy import std
+import pandas as pd
 from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
 
@@ -59,13 +63,16 @@ cols_standard = 200
 thresh_FLAIR = 70      #to mask the brain
 thresh_T1 = 30
 smooth=1.
-
+global a
+model_path = 'media/models/_85_15_unet2.h5'
+Path_MASK_folder1 =  'media/ImagenesMascarasBinarias/'
+Path_MASK_folder_Int =  'media/ImagenesMascaras/'
 # Create your views here.
 
-def mask_X_size(file):
-    image_path = sitk.ReadImage(file)
-    image_path_array = sitk.GetArrayFromImage(image_path)
-    return image_path_array.shape[0]
+#def mask_X_size(file):
+#    image_path = sitk.ReadImage(file)
+#    image_path_array = sitk.GetArrayFromImage(image_path)
+#    return image_path_array.shape[0]
 
 def conv_bn_relu(nd, k=3, inputs=None):
     conv = Conv2D(nd, k, padding='same')(inputs) #, kernel_initializer='he_normal'
@@ -84,16 +91,16 @@ def dice_coef_for_training(y_true, y_pred):
 
 def get_crop_shape(target, refer):
     # width, the 3rd dimension
-    cw = (target.get_shape()[2] - refer.get_shape()[2]).value
-    print("aqui muestra canales o capas")
-    print(cw)
+    cw = (target.get_shape()[2] - refer.get_shape()[2])
+    #print("aqui muestra canales o capas")
+    #print(cw)
     assert (cw >= 0)
     if cw % 2 != 0:
         cw1, cw2 = int(cw/2), int(cw/2) + 1
     else:
         cw1, cw2 = int(cw/2), int(cw/2)
     # height, the 2nd dimension
-    ch = (target.get_shape()[1] - refer.get_shape()[1]).value
+    ch = (target.get_shape()[1] - refer.get_shape()[1])
     assert (ch >= 0)
     if ch % 2 != 0:
         ch1, ch2 = int(ch/2), int(ch/2) + 1
@@ -112,13 +119,13 @@ def general_postprocessing(FLAIR_array, pred):
     original_pred[...] = 0
 
     if (image_rows_Dataset >= rows_standard and image_cols_Dataset >= cols_standard):
-        original_pred[:,(image_rows_Dataset-rows_standard)/2:(image_rows_Dataset+rows_standard)/2,(image_cols_Dataset-cols_standard)/2:(image_cols_Dataset+cols_standard)/2] = pred[:,:,:,0]
+        original_pred[:,int((image_rows_Dataset-rows_standard)/2):int((image_rows_Dataset+rows_standard)/2),int((image_cols_Dataset-cols_standard)/2):int((image_cols_Dataset+cols_standard)/2)] = pred[:,:,:,0]
         
         original_pred[0:start_slice, :, :] = 0
         original_pred[(num_selected_slice-start_slice-1):(num_selected_slice-1), :, :] = 0
         return original_pred
     elif (image_rows_Dataset >= rows_standard and image_cols_Dataset < cols_standard):
-        original_pred[:, (image_rows_Dataset-rows_standard)/2:(image_rows_Dataset+rows_standard)/2,:] = pred[:,:, (cols_standard-image_cols_Dataset)/2:(cols_standard+image_cols_Dataset)/2,0]
+        original_pred[:, int((image_rows_Dataset-rows_standard)/2):int((image_rows_Dataset+rows_standard)/2),:] = pred[:,:, int((cols_standard-image_cols_Dataset)/2):int((cols_standard+image_cols_Dataset)/2),0]
 
         original_pred[0:start_slice, :, :] = 0
         original_pred[(num_selected_slice-start_slice-1):(num_selected_slice-1), :, :] = 0
@@ -126,14 +133,14 @@ def general_postprocessing(FLAIR_array, pred):
 
 
     elif (image_rows_Dataset < rows_standard and image_cols_Dataset >= cols_standard):
-        original_pred[:, :,(image_cols_Dataset-cols_standard)/2:(image_cols_Dataset+cols_standard)/2] = pred[:,(rows_standard-image_rows_Dataset)/2:(rows_standard+image_rows_Dataset)/2,:,0]
+        original_pred[:, :,int((image_cols_Dataset-cols_standard)/2):int((image_cols_Dataset+cols_standard)/2)] = pred[:,int((rows_standard-image_rows_Dataset)/2):int((rows_standard+image_rows_Dataset)/2),:,0]
 
         original_pred[0:start_slice, :, :] = 0
         original_pred[(num_selected_slice-start_slice-1):(num_selected_slice-1), :, :] = 0
         return original_pred
 
     else:
-        original_pred = pred[:,(rows_standard-image_rows_Dataset)/2:(rows_standard+image_rows_Dataset)/2,(cols_standard-image_cols_Dataset)/2:(cols_standard+image_cols_Dataset)/2,0]
+        original_pred = pred[:,int((rows_standard-image_rows_Dataset)/2):int((rows_standard+image_rows_Dataset)/2),int((cols_standard-image_cols_Dataset)/2):int((cols_standard+image_cols_Dataset)/2),0]
 
         original_pred[0:start_slice, :, :] = 0
         original_pred[(num_selected_slice-start_slice-1):(num_selected_slice-1), :, :] = 0
@@ -159,8 +166,8 @@ def general_preprocessing(FLAIR_image, T1_image):
         brain_mask_FLAIR[FLAIR_image < thresh_FLAIR] = 0
         for iii in range(np.shape(FLAIR_image)[0]):
             brain_mask_FLAIR[iii,:,:] = scipy.ndimage.morphology.binary_fill_holes(brain_mask_FLAIR[iii,:,:])  #fill the holes inside brain
-        FLAIR_image = FLAIR_image[:, (image_rows_Dataset/2-rows_standard/2):(image_rows_Dataset/2+rows_standard/2), (image_cols_Dataset/2-cols_standard/2):(image_cols_Dataset/2+cols_standard/2)]
-        brain_mask_FLAIR = brain_mask_FLAIR[:, (image_rows_Dataset/2-rows_standard/2):(image_rows_Dataset/2+rows_standard/2), (image_cols_Dataset/2-cols_standard/2):(image_cols_Dataset/2+cols_standard/2)]
+        FLAIR_image = FLAIR_image[:, (int(image_rows_Dataset/2-rows_standard/2)):(int(image_rows_Dataset/2+rows_standard/2)), (int(image_cols_Dataset/2-cols_standard/2)):(int(image_cols_Dataset/2+cols_standard/2))]
+        brain_mask_FLAIR = brain_mask_FLAIR[:, (int(image_rows_Dataset/2-rows_standard/2)):(int(image_rows_Dataset/2+rows_standard/2)), (int(image_cols_Dataset/2-cols_standard/2)):(int(image_cols_Dataset/2+cols_standard/2))]
         ###------Gaussion Normalization here
         np.subtract(FLAIR_image, np.mean(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image -=np.mean(FLAIR_image[brain_mask_FLAIR == 1])      #Gaussion Normalization
         np.divide(FLAIR_image, np.std(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image /=np.std(FLAIR_image[brain_mask_FLAIR == 1])
@@ -169,8 +176,8 @@ def general_preprocessing(FLAIR_image, T1_image):
         brain_mask_T1[T1_image < thresh_T1] = 0
         for iii in range(np.shape(T1_image)[0]):
             brain_mask_T1[iii,:,:] = scipy.ndimage.morphology.binary_fill_holes(brain_mask_T1[iii,:,:])  #fill the holes inside brain
-        T1_image = T1_image[:, (image_rows_Dataset/2-rows_standard/2):(image_rows_Dataset/2+rows_standard/2), (image_cols_Dataset/2-cols_standard/2):(image_cols_Dataset/2+cols_standard/2)]
-        brain_mask_T1 = brain_mask_T1[:, (image_rows_Dataset/2-rows_standard/2):(image_rows_Dataset/2+rows_standard/2), (image_cols_Dataset/2-cols_standard/2):(image_cols_Dataset/2+cols_standard/2)]
+        T1_image = T1_image[:, int(image_rows_Dataset/2-rows_standard/2):int(image_rows_Dataset/2+rows_standard/2), int(image_cols_Dataset/2-cols_standard/2):int(image_cols_Dataset/2+cols_standard/2)]
+        brain_mask_T1 = brain_mask_T1[:,int(image_rows_Dataset/2-rows_standard/2):int(image_rows_Dataset/2+rows_standard/2),int(image_cols_Dataset/2-cols_standard/2):int(image_cols_Dataset/2+cols_standard/2)]
         #------Gaussion Normalization
         np.subtract(T1_image, np.mean(T1_image[brain_mask_T1 == 1]), out=T1_image, casting="unsafe")#T1_image -=np.mean(T1_image[brain_mask_T1 == 1])      
         np.divide(T1_image, np.std(T1_image[brain_mask_T1 == 1]), out=T1_image, casting="unsafe")#T1_image /=np.std(T1_image[brain_mask_T1 == 1])
@@ -198,7 +205,7 @@ def general_preprocessing(FLAIR_image, T1_image):
         np.subtract(FLAIR_image, np.mean(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image -=np.mean(FLAIR_image[brain_mask_FLAIR == 1])      #Gaussion Normalization
         np.divide(FLAIR_image, np.std(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image /=np.std(FLAIR_image[brain_mask_FLAIR == 1])
         FLAIR_image_suitable[...] = np.min(FLAIR_image)
-        FLAIR_image_suitable[:, :, (cols_standard-image_cols_Dataset)/2:(cols_standard+image_cols_Dataset)/2] = FLAIR_image[:, (image_rows_Dataset/2-rows_standard/2):(image_rows_Dataset/2+rows_standard/2), :]
+        FLAIR_image_suitable[:, :,int((cols_standard-image_cols_Dataset)/2):int((cols_standard+image_cols_Dataset)/2)] = FLAIR_image[:,int (image_rows_Dataset/2-rows_standard/2):int(image_rows_Dataset/2+rows_standard/2), :]
     
         # T1 -----------------------------------------------
         brain_mask_T1[T1_image >=thresh_T1] = 1
@@ -211,7 +218,7 @@ def general_preprocessing(FLAIR_image, T1_image):
         np.divide(T1_image, np.std(T1_image[brain_mask_T1 == 1]), out=T1_image, casting="unsafe")#T1_image /=np.std(T1_image[brain_mask_T1 == 1])
 
         T1_image_suitable[...] = np.min(T1_image)
-        T1_image_suitable[:, :, (cols_standard-image_cols_Dataset)/2:(cols_standard+image_cols_Dataset)/2] = T1_image[:, (image_rows_Dataset/2-rows_standard/2):(image_rows_Dataset/2+rows_standard/2), :]
+        T1_image_suitable[:, :, int((cols_standard-image_cols_Dataset)/2):int((cols_standard+image_cols_Dataset)/2)] = T1_image[:, int(image_rows_Dataset/2-rows_standard/2):int(image_rows_Dataset/2+rows_standard/2), :]
         #---------------------------------------------------
         FLAIR_image_suitable  = FLAIR_image_suitable[..., np.newaxis]
         T1_image_suitable  = T1_image_suitable[..., np.newaxis]
@@ -236,7 +243,7 @@ def general_preprocessing(FLAIR_image, T1_image):
         np.subtract(FLAIR_image, np.mean(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image -=np.mean(FLAIR_image[brain_mask_FLAIR == 1])      #Gaussion Normalization
         np.divide(FLAIR_image, np.std(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image /=np.std(FLAIR_image[brain_mask_FLAIR == 1])
         FLAIR_image_suitable[...] = np.min(FLAIR_image)
-        FLAIR_image_suitable[:, (rows_standard - image_rows_Dataset)/2:(rows_standard + image_rows_Dataset)/2,:] = FLAIR_image[:, :, (image_cols_Dataset/2-cols_standard/2):(image_cols_Dataset/2+cols_standard/2)]
+        FLAIR_image_suitable[:, int((rows_standard - image_rows_Dataset)/2):int((rows_standard + image_rows_Dataset)/2),:] = FLAIR_image[:, :, int(image_cols_Dataset/2-cols_standard/2):int(image_cols_Dataset/2+cols_standard/2)]
     
         # T1 -----------------------------------------------
         brain_mask_T1[T1_image >=thresh_T1] = 1
@@ -249,7 +256,7 @@ def general_preprocessing(FLAIR_image, T1_image):
         np.divide(T1_image, np.std(T1_image[brain_mask_T1 == 1]), out=T1_image, casting="unsafe")#T1_image /=np.std(T1_image[brain_mask_T1 == 1])
 
         T1_image_suitable[...] = np.min(T1_image)
-        T1_image_suitable[:,(rows_standard - image_rows_Dataset)/2:(rows_standard + image_rows_Dataset)/2,:] = T1_image[:, :, (image_cols_Dataset/2-cols_standard/2):(image_cols_Dataset/2+cols_standard/2)]
+        T1_image_suitable[:,int((rows_standard - image_rows_Dataset)/2):int((rows_standard + image_rows_Dataset)/2),:] = T1_image[:, :, int(image_cols_Dataset/2-cols_standard/2):int(image_cols_Dataset/2+cols_standard/2)]
         #---------------------------------------------------
         FLAIR_image_suitable  = FLAIR_image_suitable[..., np.newaxis]
         T1_image_suitable  = T1_image_suitable[..., np.newaxis]
@@ -274,7 +281,7 @@ def general_preprocessing(FLAIR_image, T1_image):
         np.subtract(FLAIR_image, np.mean(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image -=np.mean(FLAIR_image[brain_mask_FLAIR == 1])      #Gaussion Normalization
         np.divide(FLAIR_image, np.std(FLAIR_image[brain_mask_FLAIR == 1]), out=FLAIR_image, casting="unsafe")#FLAIR_image /=np.std(FLAIR_image[brain_mask_FLAIR == 1])
         FLAIR_image_suitable[...] = np.min(FLAIR_image)
-        FLAIR_image_suitable[:, (rows_standard - image_rows_Dataset)/2:(rows_standard + image_rows_Dataset)/2,(cols_standard-image_cols_Dataset)/2:(cols_standard+image_cols_Dataset)/2] = FLAIR_image[...]
+        FLAIR_image_suitable[:, int((rows_standard - image_rows_Dataset)/2):int((rows_standard + image_rows_Dataset)/2),int((cols_standard-image_cols_Dataset)/2):int((cols_standard+image_cols_Dataset)/2)] = FLAIR_image[...]
     
         # T1 -----------------------------------------------
         brain_mask_T1[T1_image >=thresh_T1] = 1
@@ -287,7 +294,7 @@ def general_preprocessing(FLAIR_image, T1_image):
         np.divide(T1_image, np.std(T1_image[brain_mask_T1 == 1]), out=T1_image, casting="unsafe")#T1_image /=np.std(T1_image[brain_mask_T1 == 1])
 
         T1_image_suitable[...] = np.min(T1_image)
-        T1_image_suitable[:, (rows_standard - image_rows_Dataset)/2:(rows_standard + image_rows_Dataset)/2,(cols_standard-image_cols_Dataset)/2:(cols_standard+image_cols_Dataset)/2] = T1_image[...]
+        T1_image_suitable[:, int((rows_standard - image_rows_Dataset)/2):int((rows_standard + image_rows_Dataset)/2),int((cols_standard-image_cols_Dataset)/2):int((cols_standard+image_cols_Dataset)/2)] = T1_image[...]
         #---------------------------------------------------
         FLAIR_image_suitable  = FLAIR_image_suitable[..., np.newaxis]
         T1_image_suitable  = T1_image_suitable[..., np.newaxis]
@@ -367,33 +374,33 @@ def get_unet_2(img_shape = None, first5=True):
 #extraer caracteristicas usando funcion que etiqueta y captura objetos por su forma o intesidad
 #tiene caracter estadistico(intensidad)
 def extraerCaracteristicas(Final_MASK_image_path,name):
-  #Lectura de las mascara- con intensidades
-  Mask_image = sitk.ReadImage(Final_MASK_image_path,sitk.sitkInt32)
-  #Declaramos las dos variables para obtener información segun forma o intensidad
-  #Intensidad
-  cc = sitk.ConnectedComponent(Mask_image>0)
-  intensity_stats = sitk.LabelIntensityStatisticsImageFilter()
-  intensity_stats.Execute(cc,Mask_image)
-  #Forma
-  cc = sitk.ConnectedComponentImageFilter()
-  cca_image=cc.Execute(Mask_image)
-  shape_stats = sitk.LabelShapeStatisticsImageFilter()
-  shape_stats.Execute(cca_image)
+    #Lectura de las mascara- con intensidades
+    Mask_image = sitk.ReadImage(Final_MASK_image_path,sitk.sitkInt32)
+    #Declaramos las dos variables para obtener información segun forma o intensidad
+    #Intensidad
+    cc = sitk.ConnectedComponent(Mask_image>0)
+    intensity_stats = sitk.LabelIntensityStatisticsImageFilter()
+    intensity_stats.Execute(cc,Mask_image)
+    #Forma
+    cc = sitk.ConnectedComponentImageFilter()
+    cca_image=cc.Execute(Mask_image)
+    shape_stats = sitk.LabelShapeStatisticsImageFilter()
+    shape_stats.Execute(cca_image)
 
-  nombrePaciente=name
+    nombrePaciente=name
 
-  stats_list = [(intensity_stats.GetKurtosis(i),
-                intensity_stats.GetPhysicalSize(i),
-                intensity_stats.GetRoundness(i),
-                intensity_stats.GetPerimeter(i),
-                intensity_stats.GetVariance(i),
+    stats_list = [(intensity_stats.GetKurtosis(i),
+                #intensity_stats.GetPhysicalSize(i),
+                  intensity_stats.GetRoundness(i),
+                  intensity_stats.GetPerimeter(i),
+                  intensity_stats.GetVariance(i),
                 #intensity_stats.GetElongation(i),
-                intensity_stats.GetStandardDeviation(i),
-                  shape_stats.GetPhysicalSize(i),
-                  shape_stats.GetElongation(i),
-                  shape_stats.GetFlatness(i)) for i in intensity_stats.GetLabels()]
-  cols=["Curtosis_intensidad",
-        "Área_intensidad",
+                  intensity_stats.GetStandardDeviation(i),
+                    shape_stats.GetPhysicalSize(i),
+                    shape_stats.GetElongation(i),
+                    shape_stats.GetFlatness(i)) for i in intensity_stats.GetLabels()]
+    cols=["Curtosis_intensidad",
+        #"Área_intensidad",
         "Redondez_intensidad",
         "Perimetro_intensidad",
         "Varianza_intensidad",
@@ -402,11 +409,11 @@ def extraerCaracteristicas(Final_MASK_image_path,name):
         "Volumen_forma (nm^3)",
         "Elongación_forma",
         "Flatness(llanura)_forma",]
-  stats = pd.DataFrame(data=stats_list, index=intensity_stats.GetLabels(), columns=cols)
-  #stats.describe()
-  xpru=stats.mean()
-  print(xpru)
-  stats_list = [ (
+    stats = pd.DataFrame(data=stats_list, index=intensity_stats.GetLabels(), columns=cols)
+    #stats.describe()
+    xpru=stats.mean()
+    print(xpru)
+    stats_list = [ (
                               nombrePaciente,
                               xpru[0],
                               xpru[1],
@@ -416,9 +423,8 @@ def extraerCaracteristicas(Final_MASK_image_path,name):
                               xpru[5],
                               xpru[6],
                               xpru[7],
-                              xpru[8],
                               intensity_stats.GetNumberOfLabels())]
-  return stats_list
+    return stats_list
 
 '''
 Guarda una imagen nifty en jpg; si tiene un solo corte en z se lo toma caso contrario
@@ -545,6 +551,7 @@ def getMascaraIntensidad(Flair,MaskB,pathFolderfinal):
   MASK_image = sitk.ReadImage(MASK_image_path,sitk.sitkInt32)
   FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
   MASK_array = sitk.GetArrayFromImage(MASK_image)
+
   dotProduct = np.multiply(FLAIR_array,MASK_array)
   mask_new = sitk.GetImageFromArray(dotProduct)
   mask_new.CopyInformation(FLAIR_image)
@@ -553,8 +560,36 @@ def getMascaraIntensidad(Flair,MaskB,pathFolderfinal):
     v = FLAIR_image.GetMetaData(k)
     mask_new.SetMetaData(k,v)
     #print("({0}) = = \"{1}\"".format(k,v))
-  filename_resultImage = pathFolderfinal+"ProductP" + MASK_image_path
-  sitk.WriteImage(mask_new, filename_resultImage )
+  List_MASK_image_path=MASK_image_path.split("/")
+  print(List_MASK_image_path[2])
+  filename_resultImage = pathFolderfinal+"Product_" + List_MASK_image_path[2]
+  #sitk.WriteImage(mask_new, "media/ImagenesMascaras/ProductP_3415.nii.gz" )
+  sitk.WriteImage(mask_new, filename_resultImage)
+
+
+'''
+Obtener el overlay entre la mascara de intensidades y la MRI FLAIR
+
+'''
+def getOverlay(FLAIR_image_path,MASK_image_path,PathNameImageOverlay):
+
+    color = [252,132,13]
+
+    #FLAIR_image_path = './input/pre/mrESANDI_ITOIZ_JUAN_JOSE_t2_tirm_TRA_dark-fluid_3mm_20110524164030_9.nii.gz'#'./input/pre/T1.nii.gz'#sys.argv[2] #absolute path of the t1 image.    
+    #MASK_image_path =  '/content/Parkison-s-disease-/output/HM_EsantiJuanJose.nii.gz'
+
+    FLAIR_image = sitk.ReadImage(FLAIR_image_path,sitk.sitkInt32)
+    MASK_image = sitk.ReadImage(MASK_image_path,sitk.sitkInt32)
+    FLAIR_array = sitk.GetArrayFromImage(FLAIR_image)
+    MASK_array = sitk.GetArrayFromImage(MASK_image)
+
+    #PROCESO DE OVERLAY DE LAS IMAGENES
+    resampled_FLAIR = sitk.Resample(FLAIR_image, MASK_image, sitk.Transform(),sitk.sitkLinear, 0.0, FLAIR_image.GetPixelID())
+    rescaled_FLAIR = sitk.Cast(sitk.RescaleIntensity(resampled_FLAIR), sitk.sitkUInt8)
+
+    #GUARDO EL OVERLAY ENTRE LAS IMAGENES
+    sitk.WriteImage(sitk.LabelOverlay(rescaled_FLAIR, MASK_image, 0.5,colormap=color), PathNameImageOverlay) 
+
 
 '''
 Funcion que convierte un folder que contiene imagenes dicom en un solo archivo nii
@@ -663,7 +698,7 @@ def guardarMejorModeloML(fileNameModeloSavePKL):
           print('Prediccion:',y_pred)
           #joblib.dump(algoritmo,fileNameModeloSavePKL)
 #Diagnostico PD mediante datos de caracteristicas de archivo CSV
-def diagnosticoFinalPD(listFeaturesToPredict):
+def diagnosticoFinalPD_Habla(listFeaturesToPredict):
   listaDataFeatures=listFeaturesToPredict.split('","') #lista de string separado por ","
   strLista=" ".join(listaDataFeatures)#Unimos los lementos de la lista por vacio
   strLista=strLista.replace('"',' ') #reemplazamos la comilla " por espacio vacio
@@ -680,6 +715,24 @@ def diagnosticoFinalPD(listFeaturesToPredict):
   #print(porcentajeH)
   porcentajePD=clf_from_joblib.predict_proba(listaDataFeatures2)[0,1]
   #print(porcentajePD)
+
+  return str(round(porcentajePD, 2)*100) + "%" ,str(round(porcentajeH,2)*100) + "%"
+def diagnosticoFinalPD_MRI(listFeaturesToPredict):
+  listFeaturesToPredict1=list()
+  for i in listFeaturesToPredict:
+    lista1=list(i)
+    print(list())
+  lista1.pop(0)
+  listFeaturesToPredict1.append(lista1) #convierto la tupla de features a lista de lista de features
+  print(listFeaturesToPredict1)
+  clf_from_joblib=joblib.load('media/models/ClasificadorPDMRI_49.pkl')
+  pred2=clf_from_joblib.predict(listFeaturesToPredict1)
+  print(pred2)
+  #print(clf_from_joblib.predict_proba(listFeaturesToPredict1))
+  porcentajeH=clf_from_joblib.predict_proba(listFeaturesToPredict1)[0,0]
+  print(porcentajeH)
+  porcentajePD=clf_from_joblib.predict_proba(listFeaturesToPredict1)[0,1]
+  print(porcentajePD)
 
   return str(round(porcentajePD, 2)*100) + "%" ,str(round(porcentajeH,2)*100) + "%"
 #View para calcular las precisiones de los modelos de ML para la clasificacion
@@ -703,8 +756,8 @@ def diagnoticoPorCsv_Habla(request):
     global q
     q = request.GET.get('q','')
     #print('INICIO',q,'FIN')
-    diagnostico1,diagnostico2=diagnosticoFinalPD(q)
-    diagnosticoFinalPD(q)
+    diagnostico1,diagnostico2=diagnosticoFinalPD_Habla(q)
+    diagnosticoFinalPD_Habla(q)
     if request.method == 'GET': 
         print(diagnostico1)
         print(diagnostico2)       
@@ -718,6 +771,45 @@ def barraCargaModeloDiagPorMRI(request):
     return redirect('home_administrador')
 #View para calcular el diagnostico de PD por MRI
 def diagnoticoPorMRI(request):
-    if request.method == 'GET':      
-        return render(request, 'Diagnostico/diagnosticoPD_MRI.html') 
+    colsNamesFeatures=[
+        "Nombre",
+        "Curtosis_intensidad",
+        "Redondez_intensidad",
+        "Perimetro_intensidad",
+        "Varianza_intensidad",
+        "Desviación estandar_intensidad",
+        "Volumen_forma(nm^3)",
+        "Elongación_forma",
+        "Flatness_forma",
+        "Cantidad_lesiones"]
+
+    diagnosticoPD = 0
+    diagnosticoSano = 0
+    if request.method == 'GET': 
+        instanciaUltimaT1=ImagenMRI.objects.filter(tipo='T1').last()
+        instanciaUltimaFLAIR=ImagenMRI.objects.filter(tipo='FLAIR').last()
+        instanciaSujeto=Sujeto.objects.get(id_sujeto=instanciaUltimaT1.id_sujeto_id)
+
+        T1_image = instanciaUltimaT1.imagen.path
+        FLAIR_image = instanciaUltimaFLAIR.imagen.path
+
+        MASK_image_Name = 'M_'+ str(instanciaSujeto.nombre) + str(instanciaSujeto.apellido) + '.nii'  #debe ser en .nii para que funcione rapido y bien
+        generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image_Name,Path_MASK_folder1) #Genera mascara binaria
+
+        Path_MASK_folder = 'media/ImagenesMascarasBinarias/'+MASK_image_Name
+        getMascaraIntensidad(FLAIR_image,Path_MASK_folder,Path_MASK_folder_Int) #Genera mascara con intensidades corregida
+
+        Final_MASK_image_path='media/ImagenesMascaras/Product_'+MASK_image_Name
+        name=str(instanciaSujeto.nombre) +' '+ str(instanciaSujeto.apellido)
+
+        features=extraerCaracteristicas(Final_MASK_image_path,name) #Extraccion de caracteristicas
+        for i in features:
+            listFeaturesToPredict=list(i) #Lista de los valores de las caracteristicas calculados
+        print(listFeaturesToPredict)   
+        diagnosticoPD,diagnosticoSano=diagnosticoFinalPD_MRI(features) #Calcula el diagnostico de PD o NO PD
+        PathNameImageOverlay='media/ImagenesOverlay/Overlay_'+MASK_image_Name
+        getOverlay(FLAIR_image,Final_MASK_image_path,PathNameImageOverlay)
+        print(diagnosticoPD)
+        print(diagnosticoSano)
+        return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
     return redirect('home_administrador')

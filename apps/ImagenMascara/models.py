@@ -4,8 +4,8 @@ from apps.ImagenMRI.models import ImagenMRI
 class ImagenMascara(models.Model):
     id_mask = models.AutoField(primary_key=True)
     imagen = models.ImageField(upload_to='ImagenesMascaras/',blank=True, null=True)
-    nombre = models.CharField(max_length=30)
-    tamanio = models.CharField(max_length=20)
+    #nombre = models.CharField(max_length=30)
+    #tamanio = models.CharField(max_length=20)
     id_mri = models.ForeignKey(ImagenMRI,null=True,blank=True,on_delete=models.CASCADE)
     descripcion = models.CharField(max_length=150,null=False, blank=False,default="Ninguna")
     #Especifica como se va guardar el objet en el admin de django

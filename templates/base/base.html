@@ -102,17 +102,10 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Nuevas Imagenes</a>
-                                </li>
-                                <li>
-                                    <a href="#">Nuevo Modelo</a>
-                                </li>
-                                <li>
-                                    <a href="#">Estudio PD con Habla</a>
+                                    <a href="#">Lista de Diagnóstico</a>
                                 </li>
                             </ul>
                         </li>
@@ -150,6 +143,18 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="has-sub">
+                            <a class="js-arrow" href="#">
+                                <i class="fas fa-tachometer-alt"></i>Más opciones</a>
+                            <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                <li>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
+                                </li>
+                                <li>
+                                    <a href="#">Lista de Diagnóstico</a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -163,7 +168,7 @@
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <h2>Modo: Cliente</h2>
+                            <h2>Modo: Doctor</h2>
                             <div class="header-button">
                                 <div class="account-wrap">
                                     <div class="account-item clearfix js-item-menu">
@@ -207,7 +212,7 @@
                 <div class="au-card au-card--no-shadow au-card--no-pad m-b-70">
                     <div class="au-card-title">
                         <div class="bg-overlay bg-overlay--blue"></div>
-                        <h3><i class="zmdi zmdi-image"></i>Visualizador de imagenes MRI</h3>
+                        <h3><i class="zmdi zmdi-image"></i>Visualizador de Imágenes MRI</h3>
                     </div>
                     <div class="papaya" data-params="params"></div>
                 </div>
