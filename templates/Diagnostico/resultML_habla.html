@@ -26,30 +26,32 @@
 							<div class="close"  style="color:black;">x</div>
 							<h1><b> Precisiones de los Modelos de ML</b></h1>
 						</div>
-						<table class="table table-bordered">
-							<thead>
-								<tr >
-									<td>Nombre del Modelo</td>
-									<td>Precisión media (%)</td>
-									<td>Precisión desviación estandar (%)</td>
-								</tr>	
-							</thead>
-							<tbody  class="content-filas">
-								{% if data %}
-								{% for i,j,k in data %}
-								<tr>
+						{% if data %}
+							<table class="table table-bordered">
+								<thead>
+									<tr >
+										<td>Nombre del Modelo</td>
+										<td>Precisión media (%)</td>
+										<td>Precisión desviación estandar (%)</td>
+									</tr>	
+								</thead>
+								<tbody  class="content-filas">
+									
+										{% for i,j,k in data %}
+										<tr>
 
-									<td>{{ i }}</td>
-									<td>{{ j|floatformat:2 }}</td>
-									<td>{{ k|floatformat:2 }}</td>			
-								</tr>
-								{% endfor %}
-								
-								{% else %}
-								<h1>No hay datos que mostrar!</h1>
-								{% endif %}
-							</tbody>
-						</table> 
+											<td>{{ i }}</td>
+											<td>{{ j|floatformat:2 }}</td>
+											<td>{{ k|floatformat:2 }}</td>			
+										</tr>
+										{% endfor %}
+										
+									
+								</tbody>
+							</table> 
+						{% else %}
+							<h3>No hay datos que mostrar!</h3>
+						{% endif %}
 			</div>
 		</div>
 

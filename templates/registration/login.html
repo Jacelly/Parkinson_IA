@@ -37,23 +37,7 @@ LOGIN
 
     </head>
     <body id="loginBody" >
-        <div class="container ">
-            {% if messages %}
-                <div class="col-sm-10">
-                    <div class="row ">
 
-                        {% for message in messages %}
-                         <div class="alert alert-success alert-dismissible">
-                         <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
-                        <p{% if message.tags %} class="alert alert-success"{% endif %}>{{ message }}</p>
-
-                         </div>
-                        {% endfor %}
-
-                    </div>
-                </div>
-            {% endif %}
-        </div>
         <div class="color-content-login "style="text-align:center;">
             <br>
             <img id = "imagenFormato" src="/static/imagenes/brainje.jpg"> <br><br>

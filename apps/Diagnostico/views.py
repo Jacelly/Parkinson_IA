@@ -746,13 +746,23 @@ def diagnosticoFinalPD_MRI(listFeaturesToPredict):
   return str(round(porcentajePD, 2)*100) + "%" ,str(round(porcentajeH,2)*100) + "%"
 #View para calcular las precisiones de los modelos de ML para la clasificacion
 def precisionesCsv_Habla(request):
-    instanciaCsv=CSV.objects.last()
-    path="media/"+str(instanciaCsv.documento)
-    X,y=SeparaDataCsv(path)
-    names,results,results1=medirPresicionScoresModelos(X,y)
-    if request.method == 'GET':       
-        return render(request, 'Diagnostico/resultML_habla.html',{'data':zip(names,results, results1)}) 
-    return redirect('home_administrador')
+    print("ONSERVA BRO",CSV.objects.last())
+    #names=''
+    #results = list()
+    #results1 = list()
+    if(CSV.objects.last()):
+        instanciaCsv=CSV.objects.last()
+        print("entro",CSV.objects.last())
+        path="media/"+str(instanciaCsv.documento)
+        X,y=SeparaDataCsv(path)
+        names,results,results1=medirPresicionScoresModelos(X,y)
+        if request.method == 'GET':       
+            return render(request, 'Diagnostico/resultML_habla.html',{'data':zip(names,results, results1)}) 
+        return redirect('home_administrador')
+    else:
+        if request.method == 'GET':       
+            return render(request, 'Diagnostico/resultML_habla.html') 
+        return redirect('home_administrador')
 #View para ingresar data para diagnosticar PD con el modelo de clasifcicacion de ML
 def pruebasMLCsv_Habla(request):
     if request.method == 'GET':       
@@ -826,12 +836,15 @@ def diagnoticoPorMRI(request):
         #Guardamos en las respectivas tablas de la BD la infor de todo el proceso realizado
         print(ImagenMascara.objects.filter(imagen=Final_MASK_image_path_SaveTable).exists())
         print(Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).exists())
-        instanciaMask=ImagenMascara.objects.last()
+        
         if(ImagenMascara.objects.filter(imagen=Final_MASK_image_path_SaveTable).exists()==False):
             ImagenMascara.objects.create(imagen=Final_MASK_image_path_SaveTable)
+
+        instanciaMask=ImagenMascara.objects.filter(imagen=Final_MASK_image_path_SaveTable).last()
+
         if(Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).exists()==False):
-            
             Overlay.objects.create(imagen=PathNameImageOverlay_SaveTable,id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask)
+
         print(TablaCaracteristicas.objects.filter(curtosisI=listFeaturesToPredict[1]).exists(),
             TablaCaracteristicas.objects.filter(redondezI=listFeaturesToPredict[2]).exists(),
             TablaCaracteristicas.objects.filter(perimetroI=listFeaturesToPredict[3]).exists(),
@@ -854,7 +867,7 @@ def diagnoticoPorMRI(request):
             perimetroI=listFeaturesToPredict[3],varianzaI=listFeaturesToPredict[4],desviEstandI=listFeaturesToPredict[5],volumenF=listFeaturesToPredict[6],enlogacionF=listFeaturesToPredict[7],flagnessF=listFeaturesToPredict[8],cantidad=listFeaturesToPredict[9],
             id_sujeto=instanciaSujeto,id_mask=instanciaMask)
 
-        instanciaOverlay=Overlay.objects.last()
+        instanciaOverlay=Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).last()
         instanciaTablaC=TablaCaracteristicas.objects.last()
         if((Diagnostico.objects.filter(id_mri=instanciaUltimaFLAIR).exists()==False) and
         (Diagnostico.objects.filter(id_mask=instanciaMask).exists()==False) and
@@ -872,5 +885,32 @@ def diagnoticoPorMRI(request):
 class DiagnosticoDisponible(ListView):
     model = Diagnostico
     template_name = 'Diagnostico/listaDiagnosticoDispo.html'
-    success_url = reverse_lazy('tratamiento_disponible')
+    success_url = reverse_lazy('diagnostico_disponible')
     paginate_by=5
+#View para eliminar diagnostico de un paciente 
+def RegistroDiagDelete(request, id_diag):
+    instancia = Diagnostico.objects.get(id_diag=id_diag)
+    if request.method == 'POST':        
+        instancia.delete()
+        messages.success(request, 'Su registro de diagnóstico ha sido eliminado con éxito.')
+        return redirect('diagnostico_disponible')
+    return render(request, 'Diagnostico/eliminarRegistroDiag.html',{'instancia':instancia})
+#View para buscar un diagnostico nombre de paciente
+def busquedaDiagByPaciente(request):
+    q = request.GET.get('q','')
+    print("mira",q)
+    pacienteID=0
+    if(Sujeto.objects.filter(nombre__startswith=q)):
+        pacienteID=Sujeto.objects.get(nombre__startswith=q).id_sujeto
+    if(Sujeto.objects.filter(apellido__startswith=q)):
+        pacienteID=Sujeto.objects.get(apellido__startswith=q).id_sujeto
+
+    DiagBypacienteID=Diagnostico.objects.filter(id_sujeto=pacienteID)
+    if(DiagBypacienteID and q!=""):
+      print("okkk1111",DiagBypacienteID[0].id_sujeto)
+      diagnosticos=DiagBypacienteID
+      print(diagnosticos)
+    else:
+      diagnosticos = ""
+
+    return render(request, 'Diagnostico/listaDiagnosticoDispo_busqueda.html', {'diagnosticos': diagnosticos ,'busqueda':q})

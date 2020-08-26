@@ -13,8 +13,8 @@ class Diagnostico(models.Model):
     id_overlay = models.ForeignKey(Overlay,null=True,blank=True,on_delete=models.CASCADE)
     id_sujeto = models.ForeignKey(Sujeto,null=True,blank=True,on_delete=models.CASCADE)
     id_tablaC = models.ForeignKey(TablaCaracteristicas,null=True,blank=True,on_delete=models.CASCADE)
-    porcentPD =models.CharField(max_length=4,null=True, blank=True)
-    porcentNoPD =models.CharField(max_length=4,null=True, blank=True)
+    porcentPD =models.CharField(max_length=10,null=True, blank=True)
+    porcentNoPD =models.CharField(max_length=10,null=True, blank=True)
     descripcion = models.CharField(max_length=150,null=False, blank=False,default="Ninguna")
     
     class Meta:

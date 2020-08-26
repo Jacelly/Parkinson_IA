@@ -256,10 +256,10 @@
                     </div>
                     <div class="content-formListCitas">
                         <br>
-                        <form action="{% url 'diagnostico_busqueda' %}" method="get">
+                        <form >
                             <div class="form-group form-header col-sm-12">
-                              <input  name="q"  style=" margin-top:5px; border-radius: 15px;"  type="text" class="form-control" placeholder="buscar">
-                              <button  style="border:1px solid transparent; background-color: transparent;height:20%;margin-top:15px"><img  src="/static/imagenes/buscar.png" alt="logo" style="margin-top:-10px; margin-left:10px; width: 20px; height:20px;"></button>
+                              <input  name="q"  style=" margin-top:5px; border-radius: 15px;"  value="{{busqueda}}"  type="text" class="form-control" placeholder="buscar">
+                              <button href="{% url 'diagnostico_busqueda' %}" style="border:1px solid transparent; background-color: transparent;height:20%;margin-top:15px"><img  src="/static/imagenes/buscar.png" alt="logo" style="margin-top:-10px; margin-left:10px; width: 20px; height:20px;"></button>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover " >
@@ -277,8 +277,8 @@
                                         
                                     </thead>
                                     <tbody style="text-align:center;">
-                                        {% if object_list %}
-                                        {% for diagnostico in object_list %}
+                                        {% if diagnosticos %}
+                                        {% for diagnostico in diagnosticos %}
                                         <tr>
                                             <td >{{ diagnostico.id_diag}}</td>
                                             <td>
