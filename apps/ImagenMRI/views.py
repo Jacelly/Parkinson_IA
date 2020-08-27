@@ -39,6 +39,10 @@ def ValidaImg(request):
         arrayname = name.split(".")
         ultimaPos=len(arrayname)-1
         #la imagen no tiene extension
+        if len(name.split("("))!=1 or len(name.split(")"))!=1:
+            return -3
+
+
         if len(arrayname)==0:
             return -1
         elif arrayname[ultimaPos]=="nii" or arrayname[ultimaPos]=="dcm":
@@ -117,7 +121,7 @@ def MriRegister(request):
                     return redirect('home_administrador')
                 else:
                     print("Si entra pero no es cerebro")
-                    messages.warning(request, 'Su registro no se ha podido guardar.')
+                    messages.warning(request, 'Su registro no se ha podido guardar, la imagen que ingreso no es del cerebro.')
                     removeAll()
                     return redirect('home_administrador')
                 #print("pasa")
@@ -140,6 +144,10 @@ def MriRegister(request):
         elif case==-2:
             #print("Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
             messages.warning(request,"Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
+            return redirect('home_administrador')
+        elif case==-3:
+            #print("Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
+            messages.warning(request,"Este archivo tiene caracteres inválidos, por favor evitar el ingreso de caracteres '(' o ')'.")
             return redirect('home_administrador')
     else:
         form2 = MRIForm()

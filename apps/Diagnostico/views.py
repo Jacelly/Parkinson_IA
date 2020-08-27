@@ -446,13 +446,13 @@ def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
   nda = sitk.GetArrayFromImage(grid_image)
   z=nda.shape[0]
   if z==1:
-    os.system("python3 med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
+    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
     return 1
   elif z>1:
     n=int(z/2)
     print("AQUI ESTA n---------------------------->",n)
-    os.system("python3 med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
+    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg --sliceToConvert n
     return 1
   else:
