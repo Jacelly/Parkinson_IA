@@ -1,16 +1,17 @@
+
 import gzip
 import glob
 import os, shutil
+from apps.ImagenMRI.models import ImagenMRI
 from django.shortcuts import render,redirect
 from apps.ImagenMRI.forms import MRIForm
-from apps.ImagenMRI.models import ImagenMRI
 from django.contrib import messages
 from apps.Diagnostico.views import isBraimJPG,saveMRINiftytoJPG,changedim
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
-#from apps.Diagnostico.views import generateMaskTwoArgument,getMascaraIntensidad
+
 pathMedia="media/"
 pathTemporal="tmp/"
 pathModelBrain="models/brain_not_brain.h5"
@@ -63,9 +64,11 @@ def removeAll():
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+
 def MriRegister(request):
     if request.method == 'POST':
         form2 = MRIForm(request.POST or None,request.FILES or None)
+      
         case = ValidaImg(request)
         #Satisfactorio imagen nii o dcm o gz con los anteriores formatos
         if case==1 or case==2:
@@ -82,7 +85,7 @@ def MriRegister(request):
                         destination.write(chunk)
                 #path = default_storage.save(pathJPGMRI, ContentFile(data.read()))
                 #tmp_file = os.path.join(settings.MEDIA_ROOT, path)
-                
+
                 if case==2:
                     #se guardo el .nii file
                     pathMRI=pathMedia+pathTemporal+request.FILES['imagen'].name.split(".gz")[0]
@@ -103,6 +106,7 @@ def MriRegister(request):
                 print("hola------------------------------------------------------->")
                 print(casetmp)
                 listaImg= glob.glob(pathMedia+pathTemporal+"*.jpg")
+                print(listaImg)
                 changedim(listaImg[len(listaImg)-1])
                 bandera = isBraimJPG(listaImg[len(listaImg)-1],pathMedia+pathModelBrain)
                 if bandera:
@@ -137,18 +141,9 @@ def MriRegister(request):
             #print("Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
             messages.warning(request,"Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
             return redirect('home_administrador')
-        #x = name.split(",")
-        #print(x)
-        '''if form2.is_valid():
-            form2.save() 
-          
-            messages.success(request, 'Registro ha sido creado con éxito.')
-            return redirect('home_administrador')
-        else:
-            messages.warning(request, 'Su registro no se ha podido guardar.')
-            return redirect('home_administrador')'''
     else:
         form2 = MRIForm()
+        
     return render(request, 'ImagenMRI/MriForm.html', {
         'form2': form2,
        

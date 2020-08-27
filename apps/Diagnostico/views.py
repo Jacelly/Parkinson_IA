@@ -5,6 +5,7 @@ import math
 from tqdm.auto import tqdm
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,TemplateView
 from django.urls import reverse_lazy
+from django.contrib import messages
 
 from apps.ImagenMRI.models import ImagenMRI
 from apps.Sujeto.models import Sujeto
@@ -445,12 +446,13 @@ def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
   nda = sitk.GetArrayFromImage(grid_image)
   z=nda.shape[0]
   if z==1:
-    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
+    os.system("python3 med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
     return 1
   elif z>1:
     n=int(z/2)
-    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
+    print("AQUI ESTA n---------------------------->",n)
+    os.system("python3 med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg --sliceToConvert n
     return 1
   else:
@@ -895,6 +897,10 @@ def RegistroDiagDelete(request, id_diag):
         messages.success(request, 'Su registro de diagnóstico ha sido eliminado con éxito.')
         return redirect('diagnostico_disponible')
     return render(request, 'Diagnostico/eliminarRegistroDiag.html',{'instancia':instancia})
+class EliminarDiagnostico(DeleteView):
+    model = Diagnostico
+    template_name = 'Diagnostico/eliminarRegistroDiag.html'
+    success_url = reverse_lazy('diagnostico_disponible')
 #View para buscar un diagnostico nombre de paciente
 def busquedaDiagByPaciente(request):
     q = request.GET.get('q','')

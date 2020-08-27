@@ -116,7 +116,7 @@
                                     <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Lista de Diagnóstico</a>
+                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
                                 </li>
                                 <li>
                                     <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
@@ -177,7 +177,7 @@
                                     <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Lista de Diagnóstico</a>
+                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
                                 </li>
                                 <!--<li>
                                     <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Diagnóstico de EP por Habla</a>

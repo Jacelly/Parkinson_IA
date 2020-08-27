@@ -116,7 +116,7 @@
                                     <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Lista de Diagnóstico</a>
+                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
                                 </li>
                                 <li>
                                     <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
@@ -177,7 +177,7 @@
                                     <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
-                                    <a href="#">Lista de Diagnóstico</a>
+                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
                                 </li>
                                 <!--<li>
                                     <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Diagnóstico de EP por Habla</a>
@@ -240,16 +240,25 @@
 
             <!-- MAIN CONTENT-->
             <div class="main-content">
+                <div class="container ">
+                    {% if messages %}
+                        <div class="col-sm-10">
+                            <div class="row ">
+
+                                {% for message in messages %}
+                                 <div class="alert alert-success alert-dismissible">
+                                 <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
+                                <p{% if message.tags %} class="alert alert-success"{% endif %}>{{ message }}</p>
+
+                                 </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
                 <!--<div class="papaya" data-params="params"></div>-->
                 <div class="au-card au-card--no-shadow au-card--no-pad m-b-70">
-                    <div class="container">
-                        {% if messages %}
-                            <div class="col-sm-10">
-                                <div class="row ">
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
                     <div class="au-card-title">
                         <div class="bg-overlay bg-overlay--blue"></div>
                         <h3><i class="zmdi zmdi-image"></i>Lista de Diagnósticos</h3>
@@ -297,7 +306,7 @@
                                             <td>{{ diagnostico.porcentPD}}</td>
                                             <td>{{ diagnostico.porcentNoPD}}</td>
                                             <td>
-                                                <a class="btn" onclick="return abrir_modal('/Diagnostico/RegistroDiagEliminar/{{diagnostico.id_diag}}')">
+                                                <a class="btn" onclick="return abrir_modal('/Diagnostico/EliminarDiagnostico/{{diagnostico.id_diag}}')">
                                                     <img  src="/static/imagenes/eliminar.png" alt="logo" style=" margin-top:-10px; margin-left:10px; width: 25px; height:25px;">
                                                 </a>
 

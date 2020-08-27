@@ -20,10 +20,10 @@ def DoctorCreate(request):
 			permisoDoctor = Permission.objects.get(codename='is_doctor')
 			my_user=Doctor.objects.get(id=form.save().id)
 			my_user.user_permissions.add(permisoDoctor)
-			return redirect('home_admin')
+			return redirect('home_administrador')
 		else:
 			messages.error(request, 'No se ha podido registar Doctor.')
-			return redirect('home_admin')
+			return redirect('home_administrador')
 	else:
 		form = RegistroFormularioDoctor()
 	return render(request, 'Usuario/registrarDoctor.html', {
