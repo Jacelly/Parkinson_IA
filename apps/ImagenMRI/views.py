@@ -3,6 +3,7 @@ import gzip
 import glob
 import os, shutil
 from apps.ImagenMRI.models import ImagenMRI
+from apps.Doctor.models import Doctor
 from django.shortcuts import render,redirect
 from apps.ImagenMRI.forms import MRIForm
 from django.contrib import messages
@@ -41,8 +42,6 @@ def ValidaImg(request):
         #la imagen no tiene extension
         if len(name.split("("))!=1 or len(name.split(")"))!=1:
             return -3
-
-
         if len(arrayname)==0:
             return -1
         elif arrayname[ultimaPos]=="nii" or arrayname[ultimaPos]=="dcm":
@@ -118,11 +117,15 @@ def MriRegister(request):
                     form2.save()        
                     messages.success(request, 'Registro ha sido creado con éxito.')
                     removeAll()
+                    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                        return redirect('home_doctor')
                     return redirect('home_administrador')
                 else:
                     print("Si entra pero no es cerebro")
                     messages.warning(request, 'Su registro no se ha podido guardar, la imagen que ingreso no es del cerebro.')
                     removeAll()
+                    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                        return redirect('home_doctor')
                     return redirect('home_administrador')
                 #print("pasa")
                 #messages.success(request, 'Registro ha sido creado con éxito.')
@@ -131,23 +134,33 @@ def MriRegister(request):
                 print("No entra")
                 messages.warning(request, 'Su registro no se ha podido guardar.')
                 removeAll()
+                if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                    return redirect('home_doctor')
                 return redirect('home_administrador')
         elif case==0:
             #print("Por favor ingresar archivos NIfTI o DICOM")
             messages.warning(request,"Por favor ingresar archivos NIfTI o DICOM")
+            if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                return redirect('home_doctor')
             return redirect('home_administrador')
             #messages.warning(request, 'Por favor ingresar archivos NIfTI o DICOM')
         elif case==-1:
             #print("Este archivo no tiene extensión, por favor ingresar archivos NIfTI o DICOM")
             messages.warning(request,"Este archivo no tiene extensión, por favor ingresar archivos NIfTI o DICOM")
+            if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                return redirect('home_doctor')
             return redirect('home_administrador')
         elif case==-2:
             #print("Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
             messages.warning(request,"Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
+            if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                return redirect('home_doctor')
             return redirect('home_administrador')
         elif case==-3:
             #print("Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
             messages.warning(request,"Este archivo tiene caracteres inválidos, por favor evitar el ingreso de caracteres '(' o ')'.")
+            if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                return redirect('home_doctor')
             return redirect('home_administrador')
     else:
         form2 = MRIForm()

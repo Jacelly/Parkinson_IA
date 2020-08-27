@@ -22,7 +22,7 @@ Keras-Preprocessing==1.1.2
 kiwisolver==1.2.0
 Markdown==3.2.2
 matplotlib==3.3.1
-med2image==2.2.4
+med2image==0.7
 nibabel==3.1.1
 numpy==1.18.5
 oauthlib==3.1.0

@@ -26,6 +26,9 @@ SECRET_KEY = '=884$fk$ny71thx7#ym1fd10rc6vvc(9diq0gwdo=5p+l+^)s@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#Modo Produccion
+#ALLOWED_HOSTS = ["BrainJe.pythonanywhere.com"]
+#Modo desarrollo
 ALLOWED_HOSTS = []
 
 #Referenciamos al nuevo usuario personalizado 
@@ -133,7 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = "/home/Jacelly/as/static"
+STATIC_ROOT = "/home/BrainJe/Parkinson_IA/static"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = (os.path.join(BASE_DIR,'static'),) #Le decimos a django el directorio de nuestros archivos estaticos

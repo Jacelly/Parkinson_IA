@@ -13,6 +13,7 @@ from apps.ImagenMascara.models import ImagenMascara
 from apps.Overlay.models import Overlay
 from apps.TablaCaracteristicas.models import TablaCaracteristicas
 from apps.Diagnostico.models import Diagnostico
+from apps.Doctor.models import Doctor
 
 #Dependecias utiles para logica de nuestro modelo de clasificacion
 import csv
@@ -446,13 +447,13 @@ def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
   nda = sitk.GetArrayFromImage(grid_image)
   z=nda.shape[0]
   if z==1:
-    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
+    os.system("python med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
     return 1
   elif z>1:
     n=int(z/2)
     print("AQUI ESTA n---------------------------->",n)
-    os.system("med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
+    os.system("python med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg --sliceToConvert n
     return 1
   else:
@@ -709,8 +710,14 @@ def guardarMejorModeloML(fileNameModeloSavePKL):
           print('Prediccion:',y_pred)
           #joblib.dump(algoritmo,fileNameModeloSavePKL)
 #Diagnostico PD mediante datos de caracteristicas de archivo CSV
-def diagnosticoFinalPD_Habla(listFeaturesToPredict):
-  listaDataFeatures=listFeaturesToPredict.split('","') #lista de string separado por ","
+def diagnosticoFinalPD_Habla(StrFeaturesToPredict):
+
+
+  listaDataFeatures=StrFeaturesToPredict.split('","') #lista de string separado por ","
+  print(len(listaDataFeatures))
+  print(listaDataFeatures)
+  if(len(listaDataFeatures) <=1):
+    return  "-- %" , "-- %"
   strLista=" ".join(listaDataFeatures)#Unimos los lementos de la lista por vacio
   strLista=strLista.replace('"',' ') #reemplazamos la comilla " por espacio vacio
   listaDataFeatures=strLista.split(' ') #obtenemos una nueva lista separada por vacios
@@ -760,10 +767,12 @@ def precisionesCsv_Habla(request):
         names,results,results1=medirPresicionScoresModelos(X,y)
         if request.method == 'GET':       
             return render(request, 'Diagnostico/resultML_habla.html',{'data':zip(names,results, results1)}) 
+        messages.success(request, 'El proceso se ha completado con éxito.')
         return redirect('home_administrador')
     else:
         if request.method == 'GET':       
             return render(request, 'Diagnostico/resultML_habla.html') 
+        messages.error(request, 'El proceso no se ha completado con éxito.')
         return redirect('home_administrador')
 #View para ingresar data para diagnosticar PD con el modelo de clasifcicacion de ML
 def pruebasMLCsv_Habla(request):
@@ -778,36 +787,52 @@ def diagnoticoPorCsv_Habla(request):
     q = request.GET.get('q','')
     #print('INICIO',q,'FIN')
     diagnostico1,diagnostico2=diagnosticoFinalPD_Habla(q)
-    diagnosticoFinalPD_Habla(q)
+    #diagnosticoFinalPD_Habla(q)
+    if(diagnostico1=="-- %" and diagnostico2=="-- %"):
+        messages.error(request, 'No se puede llevar a cabo el diagnostico, ingreso dato valido!')
+        return redirect('home_administrador')
     if request.method == 'GET': 
         print(diagnostico1)
-        print(diagnostico2)       
+        print(diagnostico2)
+        messages.success(request, 'Su diagnóstico se ha completado con éxito.')       
         return render(request, 'Diagnostico/diagnosticoHabla.html',{'data1':diagnostico1,'data2':diagnostico2}) 
+
     return redirect('home_administrador')
 
 #View para barra de carga, simulando todo el tiempo que tarda en dar el modelo un diagnostico
 def barraCargaModeloDiagPorMRI(request):
     if request.method == 'GET':    
         return render(request, 'Diagnostico/barraCargaDiagPD.html') 
+    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+        return redirect('home_doctor')
     return redirect('home_administrador')
 #View para calcular el diagnostico de PD por MRI
 def diagnoticoPorMRI(request):
     colsNamesFeatures=[
-        "Nombre",
-        "Curtosis_intensidad",
-        "Redondez_intensidad",
-        "Perimetro_intensidad",
-        "Varianza_intensidad",
-        "Desviación estandar_intensidad",
-        "Volumen_forma(nm^3)",
-        "Elongación_forma",
-        "Flatness_forma",
-        "Cantidad_lesiones"]
+        "1. Nombre",
+        "2. Curtosis (intensidad)",
+        "3. Redondez (intensidad)",
+        "4. Perimetro[nm] (intensidad)",
+        "5. Varianza[nm^2] (intensidad)",
+        "6. Desviación estandar[nm] (intensidad)",
+        "7. Volumen[nm^3] (forma)",
+        "8. Elongación[nm] (forma)",
+        "9. Flatness (forma)",
+        "10. Cantidad lesiones"]
 
     diagnosticoPD = 0
     diagnosticoSano = 0
     if request.method == 'GET': 
-        
+        print("YAA FUE",ImagenMRI.objects.filter(tipo='T1').exists())
+        if(ImagenMRI.objects.filter(tipo='T1').exists()==False or
+        ImagenMRI.objects.filter(tipo='FLAIR').exists()==False):
+
+            if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                messages.error(request, 'Su diagnóstico, no se a podido completar..Intentalo de nuevo!')
+                return redirect('home_doctor')
+            messages.error(request, 'Su diagnóstico, no se a podido completar,Asegurese de ingresar las imagenes MRI primero...Intentalo de nuevo!')
+            return redirect('home_administrador')
+
         instanciaUltimaT1=ImagenMRI.objects.filter(tipo='T1').last()
         instanciaUltimaFLAIR=ImagenMRI.objects.filter(tipo='FLAIR').last()
         instanciaSujeto=Sujeto.objects.get(id_sujeto=instanciaUltimaT1.id_sujeto_id)
@@ -879,8 +904,11 @@ def diagnoticoPorMRI(request):
 
             Diagnostico.objects.create(id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask,id_overlay=instanciaOverlay,id_sujeto=instanciaSujeto,id_tablaC=instanciaTablaC,porcentPD=diagnosticoPD,porcentNoPD=diagnosticoSano)
         #print(listFeaturesToPredict[0],listFeaturesToPredict[1],listFeaturesToPredict[2],listFeaturesToPredict[3],listFeaturesToPredict[4],listFeaturesToPredict[5],listFeaturesToPredict[6],listFeaturesToPredict[7],listFeaturesToPredict[8],listFeaturesToPredict[9])
-        
+        messages.success(request, 'Su diagnóstico se ha completado con éxito.')
         return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
+    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+
+        return redirect('home_doctor')
     return redirect('home_administrador')
 
 #View para mostrar lista de diagnosticos realizados
