@@ -63,7 +63,7 @@
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <a class="logo" href="index.html">
+                        <a class="logo" href="{url 'home_administrador'}">
                             <img src="{% static 'imagenes/brainje2_150x50.png' %}" alt="CoolAdmin" />
                         </a>
                         <button class="hamburger hamburger--slider" type="button">
@@ -113,7 +113,7 @@
                                 </li>
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Paciente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
@@ -132,7 +132,7 @@
         <!-- MENU SIDEBAR-->
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
-                <a href="#">
+                <a href="{% url 'home_doctor' %}">
                     <img src="{% static 'imagenes/brainje2_250x80.png' %}" alt="Admin" />
                 </a>
             </div>
@@ -174,7 +174,7 @@
                                 </li>
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Paciente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
@@ -208,7 +208,7 @@
                                             <img src="{% static 'imagenes/avatar.png' %}" alt="John Doe" />
                                         </div>
                                         <div class="content">
-                                            <a  class="js-acc-btn" href="#">{{ user.get_full_name }}</a>
+                                            <a  class="js-acc-btn" href="#">Usuario</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
                                             <div class="info clearfix">

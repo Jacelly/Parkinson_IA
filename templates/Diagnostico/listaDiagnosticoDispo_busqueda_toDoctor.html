@@ -59,11 +59,11 @@
 
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
-        <header class="header-mobile d-block d-lg-none">
+         <header class="header-mobile d-block d-lg-none">
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <a class="logo" href="index.html">
+                        <a class="logo" href="{% url 'home_doctor' %}">
                             <img src="{% static 'imagenes/brainje2_150x50.png' %}" alt="CoolAdmin" />
                         </a>
                         <button class="hamburger hamburger--slider" type="button">
@@ -85,9 +85,6 @@
                                 <li>
                                     <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
                                 </li>
-                                <li>
-                                    <a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>
-                                </li>
                             </ul>
                         </li>
                         <li class="has-sub">
@@ -97,10 +94,6 @@
                                 <li>
                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
                                 </li>
-                                <li>
-                                    <!--<a href="#">Estudio PD con Habla</a>-->
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson (EP) por caracteristicas de Habla</a>
-                                </li>
                             </ul>
                         </li>
                         <li class="has-sub">
@@ -109,17 +102,10 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
-                                </li>
-                                <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Paciente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
-                                </li>
-                                <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -133,7 +119,7 @@
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
                 <a href="#">
-                    <img src="{% static 'imagenes/brainje2_250x80.png' %}" alt="Admin" />
+                    <img src="{% static 'imagenes/brainje2_250x80.png' %}" alt="Cool Admin" />
                 </a>
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
@@ -146,9 +132,6 @@
                                 <li>
                                     <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
                                 </li>
-                                <li>
-                                    <a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>
-                                </li>
                             </ul>
                         </li>
                         <li class="has-sub">
@@ -156,11 +139,7 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson(EP) por imagen MRI</a>
-                                </li>
-                                <li>
-                                    <!--<a href="#">Estudio PD con Habla</a>-->
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
+                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -169,22 +148,12 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <!--<a  href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
-                                </li>
-                                <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Paciente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
-                                </li>
-                                <!--<li>
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Diagnóstico de EP por Habla</a>
-                                </li>-->
-                                <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
-                                </li>
+                                </li>   
                             </ul>
                         </li>
                     </ul>
@@ -200,7 +169,7 @@
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="header-wrap">
-                            <h2>Modo: Administrador</h2>
+                            <h2>Modo: Doctor</h2>
                             <div class="header-button">
                                 <div class="account-wrap">
                                     <div class="account-item clearfix js-item-menu">
@@ -240,35 +209,26 @@
 
             <!-- MAIN CONTENT-->
             <div class="main-content">
-                <div class="container ">
-                    {% if messages %}
-                        <div class="col-sm-10">
-                            <div class="row ">
-
-                                {% for message in messages %}
-                                 <div class="alert alert-success alert-dismissible">
-                                 <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
-                                <p{% if message.tags %} class="alert alert-success"{% endif %}>{{ message }}</p>
-
-                                 </div>
-                                {% endfor %}
-
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
                 <!--<div class="papaya" data-params="params"></div>-->
                 <div class="au-card au-card--no-shadow au-card--no-pad m-b-70">
+                    <div class="container">
+                        {% if messages %}
+                            <div class="col-sm-10">
+                                <div class="row ">
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                     <div class="au-card-title">
                         <div class="bg-overlay bg-overlay--blue"></div>
                         <h3><i class="zmdi zmdi-image"></i>Lista de Diagnósticos</h3>
                     </div>
                     <div class="content-formListCitas">
                         <br>
-                        <form action="{% url 'diagnostico_busqueda' %}" method="get">
+                        <form >
                             <div class="form-group form-header col-sm-12">
-                              <input  name="q"  style=" margin-top:5px; border-radius: 15px;"  type="text" class="form-control" placeholder="buscar">
-                              <button  style="border:1px solid transparent; background-color: transparent;height:20%;margin-top:15px"><img  src="/static/imagenes/buscar.png" alt="logo" style="margin-top:-10px; margin-left:10px; width: 20px; height:20px;"></button>
+                              <input  name="q"  style=" margin-top:5px; border-radius: 15px;"  value="{{busqueda}}"  type="text" class="form-control" placeholder="buscar">
+                              <button href="{% url 'diagnostico_busqueda' %}" style="border:1px solid transparent; background-color: transparent;height:20%;margin-top:15px"><img  src="/static/imagenes/buscar.png" alt="logo" style="margin-top:-10px; margin-left:10px; width: 20px; height:20px;"></button>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover " >
@@ -286,8 +246,8 @@
                                         
                                     </thead>
                                     <tbody style="text-align:center;">
-                                        {% if object_list %}
-                                        {% for diagnostico in object_list %}
+                                        {% if diagnosticos %}
+                                        {% for diagnostico in diagnosticos %}
                                         <tr>
                                             <td >{{ diagnostico.id_diag}}</td>
                                             <td>
@@ -306,7 +266,7 @@
                                             <td>{{ diagnostico.porcentPD}}</td>
                                             <td>{{ diagnostico.porcentNoPD}}</td>
                                             <td>
-                                                <a class="btn" onclick="return abrir_modal('/Diagnostico/EliminarDiagnostico/{{diagnostico.id_diag}}')">
+                                                <a class="btn" onclick="return abrir_modal('/Diagnostico/RegistroDiagEliminar/{{diagnostico.id_diag}}')">
                                                     <img  src="/static/imagenes/eliminar.png" alt="logo" style=" margin-top:-10px; margin-left:10px; width: 25px; height:25px;">
                                                 </a>
 

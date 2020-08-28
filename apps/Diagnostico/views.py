@@ -7,6 +7,12 @@ from django.views.generic import ListView,CreateView,UpdateView,DeleteView,Templ
 from django.urls import reverse_lazy
 from django.contrib import messages
 
+
+import nibabel as nib
+import matplotlib.pyplot as plt
+from PIL import Image
+
+
 from apps.ImagenMRI.models import ImagenMRI
 from apps.Sujeto.models import Sujeto
 from apps.ImagenMascara.models import ImagenMascara
@@ -400,16 +406,17 @@ def extraerCaracteristicas(Final_MASK_image_path,name):
 
     nombrePaciente=name
 
-    stats_list = [(intensity_stats.GetKurtosis(i),
+    stats_list = [(round(intensity_stats.GetKurtosis(i), 2),
                 #intensity_stats.GetPhysicalSize(i),
-                  intensity_stats.GetRoundness(i),
-                  intensity_stats.GetPerimeter(i),
-                  intensity_stats.GetVariance(i),
+                  round(intensity_stats.GetRoundness(i), 2),
+                  round(intensity_stats.GetPerimeter(i), 2),
+                  round(intensity_stats.GetVariance(i), 2),
+                  round(intensity_stats.GetStandardDeviation(i), 2),
                 #intensity_stats.GetElongation(i),
-                  intensity_stats.GetStandardDeviation(i),
-                    shape_stats.GetPhysicalSize(i),
-                    shape_stats.GetElongation(i),
-                    shape_stats.GetFlatness(i)) for i in intensity_stats.GetLabels()]
+                    round(shape_stats.GetPhysicalSize(i), 2),
+                    round(shape_stats.GetElongation(i), 2),
+                    round(shape_stats.GetFlatness(i), 2)) for i in intensity_stats.GetLabels()]
+    print('fffffff',stats_list)
     cols=["Curtosis_intensidad",
         #"Área_intensidad",
         "Redondez_intensidad",
@@ -426,14 +433,14 @@ def extraerCaracteristicas(Final_MASK_image_path,name):
     print(xpru)
     stats_list = [ (
                               nombrePaciente,
-                              xpru[0],
-                              xpru[1],
-                              xpru[2],
-                              xpru[3],
-                              xpru[4],
-                              xpru[5],
-                              xpru[6],
-                              xpru[7],
+                              round(xpru[0], 2),
+                              round(xpru[1], 2),
+                              round(xpru[2], 2),
+                              round(xpru[3], 2),
+                              round(xpru[4], 2),
+                              round(xpru[5], 2),
+                              round(xpru[6], 2),
+                              round(xpru[7], 2),
                               intensity_stats.GetNumberOfLabels())]
     return stats_list
 
@@ -442,22 +449,88 @@ Guarda una imagen nifty en jpg; si tiene un solo corte en z se lo toma caso cont
 se calcula la mitad del corte en z y luego es procesado como un solo slice
 Ej: saveMRINiftytoJPG("./mr1.3.12.2.1107.5.2.32.35170.201102231753385275793382.0.0.0_t2_tirm_TRA_dark-fluid_3mm_20110223165745_9.nii.gz",".","mr1.3.12.2.1107.5.2.32.35170.201102231753385275793382.0.0.0_t2_tirm_TRA_dark-fluid_3mm_20110223165745_9")
 '''
-def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
+def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname,format):
+  if format=="dcm":
+    '''itkimage = sitk.ReadImage(PathSource)
+    numpyImage = sitk.GetArrayFromImage(itkimage)
+    print(numpyImage.shape)
+    print(numpyImage.shape[0])
+    slice_Number=numpyImage[0]-1
+    im = Image.fromarray(numpyImage[0,:,: ].astype(np.uint8)) 
+    im=im.convert('RGB')
+    im.save(PathFolderfinal+Finalname+".png")'''
+    return -1
+  else:
+    my_img  = nib.load(PathSource)
+    nii_data = my_img.get_fdata()
+    z=nii_data.shape[2]
+    n=len(nii_data.shape)
+    print(n)
+    if n==3:
+      if z==1:
+        im = Image.fromarray(nii_data[:,:,z-1 ].astype(np.uint8))
+        im=im.convert('RGB')
+        im.save(PathFolderfinal+Finalname+".png")
+        return 1
+        #os.system("python3 media/med2image.py -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
+        #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
+        #return 1
+      elif z>1:
+        z=int(z/2)
+        im = Image.fromarray(nii_data[:,:,z-1].astype(np.uint8))
+        im=im.convert('RGB')
+        im.save(PathFolderfinal+Finalname+".png")
+        return 1
+      else:
+        return -1
+    elif n>3:
+      '''for frame in range(nii_data.shape[3]):
+        for slice_Number in range(nii_data.shape[2]):
+          im = Image.fromarray(nii_data[:,:,slice_Number,frame].astype(np.uint8))
+          im.save(PathFolderfinal+Finalname+"_"+slice_Number+".png")
+          print("Sleep")'''
+      print("oye estas ingresando un overley... ")
+      return -2
+'''def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname):
   grid_image = sitk.ReadImage(PathSource)
   nda = sitk.GetArrayFromImage(grid_image)
   z=nda.shape[0]
+  #os.system('dir media')
   if z==1:
-    os.system("python med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
+    path = PathSource
+    my_img  = nib.load(path)
+    slice_Number=0
+    nii_data = my_img.get_fdata()
+    #nii_aff  = my_img.affine
+    print(nii_data.shape)
+    #nii_hdr  = my_img.header
+    im = Image.fromarray(nii_data[:,:,slice_Number ].astype(np.uint8))
+    im=im.convert('RGB')
+    im.save(PathFolderfinal+Finalname+".png")
+    #os.system("python3 media/med2image.py -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+str(Finalname)+ " --outputFileType jpg")
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg 
     return 1
   elif z>1:
     n=int(z/2)
-    print("AQUI ESTA n---------------------------->",n)
-    os.system("python med2image -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
+
+    path = PathSource
+    my_img  = nib.load(path)
+    slice_Number=n-1
+    nii_data = my_img.get_fdata()
+    #nii_aff  = my_img.affine
+    print(nii_data.shape)
+    #nii_hdr  = my_img.header
+    im = Image.fromarray(nii_data[:,:,slice_Number ].astype(np.uint8))
+    im=im.convert('RGB')
+    im.save(PathFolderfinal+Finalname+".png")
+
+    #print("AQUI ESTA n---------------------------->",n)
+    #os.system("python3 media/med2image.py -i "+str(PathSource)+" -d "+str(PathFolderfinal)+" -o "+ str(Finalname)+ " --outputFileType jpg --sliceToConvert "+str(n))
     #med2image -i PathSource -d PathFolderfinal -o Finalname --outputFileType jpg --sliceToConvert n
     return 1
   else:
     return -1
+'''
 
 
 '''
@@ -822,6 +895,7 @@ def diagnoticoPorMRI(request):
 
     diagnosticoPD = 0
     diagnosticoSano = 0
+    print("VERIFICA=============>",request)
     if request.method == 'GET': 
         print("YAA FUE",ImagenMRI.objects.filter(tipo='T1').exists())
         if(ImagenMRI.objects.filter(tipo='T1').exists()==False or
@@ -904,11 +978,16 @@ def diagnoticoPorMRI(request):
 
             Diagnostico.objects.create(id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask,id_overlay=instanciaOverlay,id_sujeto=instanciaSujeto,id_tablaC=instanciaTablaC,porcentPD=diagnosticoPD,porcentNoPD=diagnosticoSano)
         #print(listFeaturesToPredict[0],listFeaturesToPredict[1],listFeaturesToPredict[2],listFeaturesToPredict[3],listFeaturesToPredict[4],listFeaturesToPredict[5],listFeaturesToPredict[6],listFeaturesToPredict[7],listFeaturesToPredict[8],listFeaturesToPredict[9])
+        if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+            messages.success(request, 'Su diagnóstico se ha completado con éxito.')
+            return render(request, 'Diagnostico/diagnosticoPD_MRI_toDoctor.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
         messages.success(request, 'Su diagnóstico se ha completado con éxito.')
         return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
+    print(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists())
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
-
+        messages.success(request, 'Su diagnóstico se ha completado con éxito.')
         return redirect('home_doctor')
+    messages.success(request, 'Su diagnóstico se ha completado con éxito.')
     return redirect('home_administrador')
 
 #View para mostrar lista de diagnosticos realizados
@@ -917,26 +996,42 @@ class DiagnosticoDisponible(ListView):
     template_name = 'Diagnostico/listaDiagnosticoDispo.html'
     success_url = reverse_lazy('diagnostico_disponible')
     paginate_by=5
+class DiagnosticoDisponibleToDoctor(ListView):
+    model = Diagnostico
+    template_name = 'Diagnostico/listaDiagnosticoDispo_toDoctor.html'
+    success_url = reverse_lazy('diagnostico_disponibleToDoctor')
+    paginate_by=5
 #View para eliminar diagnostico de un paciente 
 def RegistroDiagDelete(request, id_diag):
     instancia = Diagnostico.objects.get(id_diag=id_diag)
     if request.method == 'POST':        
         instancia.delete()
+        if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+            messages.success(request, 'Su registro de diagnóstico ha sido eliminado con éxito.')
+            return redirect('diagnostico_disponibleToDoctor')
         messages.success(request, 'Su registro de diagnóstico ha sido eliminado con éxito.')
         return redirect('diagnostico_disponible')
+    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+        return render(request, 'Diagnostico/eliminarRegistroDiagToDoctor.html',{'instancia':instancia})
     return render(request, 'Diagnostico/eliminarRegistroDiag.html',{'instancia':instancia})
 class EliminarDiagnostico(DeleteView):
     model = Diagnostico
     template_name = 'Diagnostico/eliminarRegistroDiag.html'
     success_url = reverse_lazy('diagnostico_disponible')
+class EliminarDiagnosticoToDoctor(DeleteView):
+    model = Diagnostico
+    template_name = 'Diagnostico/eliminarRegistroDiagToDoctor.html'
+    success_url = reverse_lazy('diagnostico_disponibleToDoctor')
 #View para buscar un diagnostico nombre de paciente
 def busquedaDiagByPaciente(request):
     q = request.GET.get('q','')
     print("mira",q)
     pacienteID=0
     if(Sujeto.objects.filter(nombre__startswith=q)):
+        print("aaaaaaaaaaaaaaaaaaaa")
         pacienteID=Sujeto.objects.get(nombre__startswith=q).id_sujeto
     if(Sujeto.objects.filter(apellido__startswith=q)):
+        print("bbbbbbbbbbbbbbbbbbbb")
         pacienteID=Sujeto.objects.get(apellido__startswith=q).id_sujeto
 
     DiagBypacienteID=Diagnostico.objects.filter(id_sujeto=pacienteID)
@@ -947,4 +1042,6 @@ def busquedaDiagByPaciente(request):
     else:
       diagnosticos = ""
 
+    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+        return render(request, 'Diagnostico/listaDiagnosticoDispo_busqueda_toDoctor.html', {'diagnosticos': diagnosticos ,'busqueda':q})
     return render(request, 'Diagnostico/listaDiagnosticoDispo_busqueda.html', {'diagnosticos': diagnosticos ,'busqueda':q})

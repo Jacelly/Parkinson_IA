@@ -11,11 +11,14 @@ def index(request):
 def SujetoRegister(request):
     if request.method == 'POST':
         form1 = SujetoForm(request.POST)
+
         if form1.is_valid():
             form1.save()
-            messages.success(request, 'Registro ha sido creado con éxito.')
+            print(request.user.id)
             if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()): #request.user.id me devuelve el id del usuario que a iniciado sesion
+                messages.success(request, 'Registro del paciente '+ str(request.POST['nombre'])+' '+str(request.POST['apellido'])+ ' ha sido creado con éxito.')
                 return redirect('home_doctor')
+            messages.success(request, 'Registro ha sido creado con éxito.')
             return redirect('home_administrador')
         else:
             messages.warning(request, 'Su registro no se ha podido guardar.')

@@ -7,7 +7,7 @@ from apps.Doctor.models import Doctor
 from django.shortcuts import render,redirect
 from apps.ImagenMRI.forms import MRIForm
 from django.contrib import messages
-from apps.Diagnostico.views import isBraimJPG,saveMRINiftytoJPG,changedim
+from apps.Diagnostico.views import isBraimJPG,saveMRINiftytoJPG,changedim,dcm2nii
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -88,10 +88,11 @@ def MriRegister(request):
                         destination.write(chunk)
                 #path = default_storage.save(pathJPGMRI, ContentFile(data.read()))
                 #tmp_file = os.path.join(settings.MEDIA_ROOT, path)
-
+                casetmp=0
                 if case==2:
                     #se guardo el .nii file
                     pathMRI=pathMedia+pathTemporal+request.FILES['imagen'].name.split(".gz")[0]
+                    print(pathMRI)
                     unzipG(pathMedia+pathTemporal+request.FILES['imagen'].name,pathMedia+pathTemporal,request.FILES['imagen'].name.split(".gz")[0])
                     formato = pathMRI.split(".gz")[0].split(".")[(len(pathMRI.split(".gz")[0].split("."))-1)]
                     if formato=="dcm":
@@ -99,16 +100,35 @@ def MriRegister(request):
                         pathJPG=request.FILES['imagen'].name.split(".gz")[0].split(".dcm")[0]
                     else:
                         pathJPG=request.FILES['imagen'].name.split(".gz")[0].split(".nii")[0]
+                    casetmp=saveMRINiftytoJPG(pathMRI,pathMedia+pathTemporal,"temp",formato)
                 elif case==1:
+
                     formato = pathMRI.split(".")[(len(pathMRI.split("."))-1)]
                     if formato=="dcm":
-                        pathJPG=request.FILES['imagen'].name.split(".dcm")[0]
+                        pathJPG=pathMedia+pathTemporal+request.FILES['imagen'].name.split(".dcm")[0]
+                        print("entro okkkkkkkk",pathJPG)
+                        dcm2nii(pathMRI,pathJPG+".nii")
                     else:
                         pathJPG=request.FILES['imagen'].name.split(".nii")[0]
-                casetmp=saveMRINiftytoJPG(pathMRI,pathMedia+pathTemporal,pathJPG)
-                print("hola------------------------------------------------------->")
+                    casetmp=saveMRINiftytoJPG(pathMRI,pathMedia+pathTemporal,"temp",formato)
+                
+
+                if casetmp==-2:
+                    messages.warning(request, 'Su registro no se ha podido guardar, la imagen que ingreso excede de 3 dimensiones.')
+                    removeAll()
+                    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                        return redirect('home_doctor')
+                    return redirect('home_administrador')
+                if casetmp==-1:
+                    messages.warning(request, 'Su registro no se ha podido guardar, la imagen que ingreso no es formato NIfTI')
+                    removeAll()
+                    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+                        return redirect('home_doctor')
+                    return redirect('home_administrador')
+
+                #casetmp=saveMRINiftytoJPG(pathMRI,pathMedia+pathTemporal,pathJPG)
                 print(casetmp)
-                listaImg= glob.glob(pathMedia+pathTemporal+"*.jpg")
+                listaImg= glob.glob(pathMedia+pathTemporal+"*.png")
                 print(listaImg)
                 changedim(listaImg[len(listaImg)-1])
                 bandera = isBraimJPG(listaImg[len(listaImg)-1],pathMedia+pathModelBrain)
@@ -139,20 +159,20 @@ def MriRegister(request):
                 return redirect('home_administrador')
         elif case==0:
             #print("Por favor ingresar archivos NIfTI o DICOM")
-            messages.warning(request,"Por favor ingresar archivos NIfTI o DICOM")
+            messages.warning(request,"Por favor ingresar archivos NIfTI ")
             if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
                 return redirect('home_doctor')
             return redirect('home_administrador')
             #messages.warning(request, 'Por favor ingresar archivos NIfTI o DICOM')
         elif case==-1:
             #print("Este archivo no tiene extensión, por favor ingresar archivos NIfTI o DICOM")
-            messages.warning(request,"Este archivo no tiene extensión, por favor ingresar archivos NIfTI o DICOM")
+            messages.warning(request,"Este archivo no tiene extensión, por favor ingresar archivos NIfTI")
             if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
                 return redirect('home_doctor')
             return redirect('home_administrador')
         elif case==-2:
             #print("Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
-            messages.warning(request,"Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI o DICOM")
+            messages.warning(request,"Este archivo no tiene una extensión valida, por favor ingresar archivos NIfTI")
             if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
                 return redirect('home_doctor')
             return redirect('home_administrador')
