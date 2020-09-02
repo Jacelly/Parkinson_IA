@@ -6,7 +6,7 @@ from tqdm.auto import tqdm
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,TemplateView
 from django.urls import reverse_lazy
 from django.contrib import messages
-
+from apps.Diagnostico.forms import DiagnosticoForm
 
 import nibabel as nib
 import matplotlib.pyplot as plt
@@ -977,12 +977,13 @@ def diagnoticoPorMRI(request):
         (Diagnostico.objects.filter(id_tablaC=instanciaTablaC).exists()==False)):
 
             Diagnostico.objects.create(id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask,id_overlay=instanciaOverlay,id_sujeto=instanciaSujeto,id_tablaC=instanciaTablaC,porcentPD=diagnosticoPD,porcentNoPD=diagnosticoSano)
+        instanciaDiag=Diagnostico.objects.filter(id_sujeto=instanciaSujeto)[0]
         #print(listFeaturesToPredict[0],listFeaturesToPredict[1],listFeaturesToPredict[2],listFeaturesToPredict[3],listFeaturesToPredict[4],listFeaturesToPredict[5],listFeaturesToPredict[6],listFeaturesToPredict[7],listFeaturesToPredict[8],listFeaturesToPredict[9])
         if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
             messages.success(request, 'Su diagnóstico se ha completado con éxito.')
-            return render(request, 'Diagnostico/diagnosticoPD_MRI_toDoctor.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
+            return render(request, 'Diagnostico/diagnosticoPD_MRI_toDoctor.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures),'diagnostico':instanciaDiag}) 
         messages.success(request, 'Su diagnóstico se ha completado con éxito.')
-        return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures)}) 
+        return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures),'diagnostico':instanciaDiag}) 
     print(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists())
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
         messages.success(request, 'Su diagnóstico se ha completado con éxito.')
@@ -1014,6 +1015,33 @@ def RegistroDiagDelete(request, id_diag):
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
         return render(request, 'Diagnostico/eliminarRegistroDiagToDoctor.html',{'instancia':instancia})
     return render(request, 'Diagnostico/eliminarRegistroDiag.html',{'instancia':instancia})
+
+#View para eliminar diagnostico de un paciente 
+def EditarDiagObser(request, id_diag):
+    form1 = DiagnosticoForm(request.POST)#form1---->descripcion y es_parkinson
+    instancia = Diagnostico.objects.get(id_diag=id_diag)
+    if request.method == 'POST':
+        instancia.descripcion = request.POST.get('descripcion', None)
+        opcion=request.POST.get('is_parkinson', None)
+        if(opcion=="Aceptar"):
+            instancia.is_parkinson = True
+        else:
+            instancia.is_parkinson = False
+        #print(instancia.descripcion,instancia.is_parkinson)
+        #print("\nAqui esta la descripcion y si es parkinson")
+        #print(request.POST.get('descripcion', None),request.POST.get('is_parkinson', None))
+        instancia.save()
+        if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+            messages.success(request, 'Sus observaciones del diagnóstico han sido registradas con éxito.')
+            #return redirect('diagnoticoPorMRI')
+            return redirect('home_doctor')
+        messages.success(request, 'Sus observaciones del diagnóstico han sido registradas con éxito.')
+        #return redirect('diagnoticoPorMRI')
+        return redirect('home_administrador')
+    if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+        return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'instancia':instancia})
+    return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'instancia':instancia})
+
 class EliminarDiagnostico(DeleteView):
     model = Diagnostico
     template_name = 'Diagnostico/eliminarRegistroDiag.html'

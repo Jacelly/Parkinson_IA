@@ -12,6 +12,7 @@ urlpatterns = [
 	path('disponible/', views.DiagnosticoDisponible.as_view(), name='diagnostico_disponible'),
 	path('disponibleToDoctor/', views.DiagnosticoDisponibleToDoctor.as_view(), name='diagnostico_disponibleToDoctor'),
 
+	path('EditarDiagObser/<int:id_diag>', views.EditarDiagObser, name='EditarDiagObser'),
 	path('RegistroDiagEliminar/<int:id_diag>', views.RegistroDiagDelete, name='RegistroDiagDelete'),
 	path('EliminarDiagnostico/<pk>',views.EliminarDiagnostico.as_view(), name='EliminarDiagnostico'),
 	path('filtroPacientes', views.busquedaDiagByPaciente, name='diagnostico_busqueda'),

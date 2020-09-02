@@ -15,7 +15,8 @@ class Diagnostico(models.Model):
     id_tablaC = models.ForeignKey(TablaCaracteristicas,null=True,blank=True,on_delete=models.CASCADE)
     porcentPD =models.CharField(max_length=10,null=True, blank=True)
     porcentNoPD =models.CharField(max_length=10,null=True, blank=True)
-    descripcion = models.CharField(max_length=150,null=False, blank=False,default="Ninguna")
+    descripcion = models.TextField()
+    is_parkinson = models.BooleanField(default = False)
     
     class Meta:
         db_table = "Diagnostico"
