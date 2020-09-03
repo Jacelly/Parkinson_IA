@@ -292,75 +292,119 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!--<div class="col-xl-10">
+                                                        <div class="percent-chart">
+                                                            <canvas id="percent-chart"></canvas>
+                                                        </div>
+                                                    </div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="au-card chart-percent-card">
+                                        <div class="au-card-inner">
+                                            <div class="row no-gutters">
+                                                <!--<div class="col-xl-12">-->
+                                                {% if object == false %} {% csrf_token %}
+                                                <!--/diagnostico/EditarDiagObser/{{data1PD.id_diag}}-->
+                                                <form role="form" enctype="multipart/form-data" action="" method="post">
+                                                    {% endif %}
+                                                    <form class="centrar-form " enctype="multipart/form-data" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group">
+                                                            <div class="content-titulos">
+                                                                <h3><b>Califica los resultados:<b></h3>
+                                                        </div>
+                                                        <br>
+                                                        <div >
+                                                            <label for="{{form1.descripcion.name}}">{{form1.descripcion.label}}</label>
+                                                            <!--<input class="form-control"  type="text" name="apellido" placeholder="Ingresar una observación" required>-->
+                                                            <textarea id="descripcion" name="descripcion" rows="3" cols="10" style="border:solid 1px black;">Escribe aquí tus observaciones</textarea>
+                                                        </div>
+                                                        <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Aceptar">
+                                                        <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Rechazar">
+                                                        <!--<div class="col-md-6 col-md-offset-1">
+                                                            <div class="form-group" style="text-align:center;">
+                                                                <br><button class="btn btn-primary " id="botonsi" type="submit">Aceptar</button></br>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-md-offset-1">
+                                                            <div class="form-group" style="text-align:center;">
+                                                                <br><button class="btn btn-primary " id="botonno" type="submit">Rechazar</button></br>
+                                                            </div>
+                                                        </div>-->
+                                                    </div>
+                                                            
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
-                                        <div class="au-card-title">
-                                            <div class="bg-overlay bg-overlay--blue"></div>
-                                            <h3><i class="zmdi  zmdi-assignment"></i>Tabla de Características</h3>
-                                        </div>
-                                        <!-- DATA TABLE-->
-                                        <div class="au-inbox-wrap js-inbox-wrap"></div>
-                                        <div class="table-responsive m-b-40">
-                                            <table class="table table-top-campaign">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>1. Nombre</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2. Curtosis (intensidad)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>3. Redondez (intensidad)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>4. Perimetro[nm] (intensidad)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>5. Varianza[nm^2] (intensidad)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>6. Desviación estandar[nm] (intensidad)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>7. Volumen[nm^3] (forma)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>8. Elongación[nm] (forma)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>9. Flatness (forma)</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>10. Cantidad lesiones</td>
-                                                        <td>---</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
+                                    <div class="au-card-title">
+                                        <div class="bg-overlay bg-overlay--blue"></div>
+                                        <h3><i class="zmdi  zmdi-assignment"></i>Tabla de Características</h3>
                                     </div>
-                                    <!-- END DATA TABLE-->
-
+                                    <!-- DATA TABLE-->
+                                    <div class="au-inbox-wrap js-inbox-wrap"></div>
+                                    <div class="table-responsive m-b-40">
+                                        <table class="table table-top-campaign">
+                                            <tbody>
+                                                <tr>
+                                                    <td>1. Nombre</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2. Curtosis (intensidad)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3. Redondez (intensidad)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>4. Perimetro[nm] (intensidad)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>5. Varianza[nm^2] (intensidad)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>6. Desviación estandar[nm] (intensidad)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>7. Volumen[nm^3] (forma)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>8. Elongación[nm] (forma)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>9. Flatness (forma)</td>
+                                                    <td>---</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10. Cantidad lesiones</td>
+                                                    <td>---</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-
+                                <!-- END DATA TABLE-->
 
                             </div>
+
+
                         </div>
 
                     </div>
                 </div>
+
             </div>
         </div>
         <!-- END PAGE CONTAINER-->

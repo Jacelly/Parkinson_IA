@@ -1034,13 +1034,22 @@ def EditarDiagObser(request, id_diag):
         if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
             messages.success(request, 'Sus observaciones del diagnóstico han sido registradas con éxito.')
             #return redirect('diagnoticoPorMRI')
-            return redirect('home_doctor')
+            return redirect('diagnostico_disponibleToDoctor')
         messages.success(request, 'Sus observaciones del diagnóstico han sido registradas con éxito.')
         #return redirect('diagnoticoPorMRI')
-        return redirect('home_administrador')
+        return redirect('diagnostico_disponible')
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
         return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'instancia':instancia})
     return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'instancia':instancia})
+
+class EditarDiagnostico(DeleteView):
+    model = Diagnostico
+    template_name = 'Diagnostico/editarRegistroDiag.html'
+    success_url = reverse_lazy('diagnostico_disponible')
+class EditarDiagnosticoToDoctor(DeleteView):
+    model = Diagnostico
+    template_name = 'Diagnostico/editarRegistroDiagToDoctor.html'
+    success_url = reverse_lazy('diagnostico_disponible')
 
 class EliminarDiagnostico(DeleteView):
     model = Diagnostico

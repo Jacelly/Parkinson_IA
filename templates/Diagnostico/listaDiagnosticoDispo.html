@@ -315,7 +315,9 @@
                                                 <a class="btn" onclick="return abrir_modal('/Diagnostico/EliminarDiagnostico/{{diagnostico.id_diag}}')">
                                                     <img src="/static/imagenes/eliminar.png" alt="logo" style=" margin-top:-10px; margin-left:10px; width: 25px; height:25px;">
                                                 </a>
-
+                                                <a class="btn" onclick="return abrir_modal('/Diagnostico/EditarDiagnostico/{{diagnostico.id_diag}}')">
+                                                    <i style="font-size:24px" class="fa">&#xf044;</i>
+                                                </a>
                                             </td>
                                         </tr>
                                         {% endfor %} {% else %}

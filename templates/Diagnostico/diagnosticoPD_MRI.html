@@ -241,11 +241,10 @@
                     </div>
                     <div class="papaya" data-params="params"></div>
                 </div>
-
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-5">
                                 <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
                                     <div class="au-card-title">
                                         <div class="bg-overlay bg-overlay--blue"></div>
@@ -283,57 +282,55 @@
                                                         {% endif %}
                                                     </div>
                                                 </div>
-                                                <div class="row no-gutters">
-                                                    <div class="col-xl-12">
-                                                        <div class="modal-dialog modal-lg">
-                                                            <div class="modal-content">
-                                                                {% if object == false %} {% csrf_token %}
-                                                                <!--/diagnostico/EditarDiagObser/{{data1PD.id_diag}}-->
-                                                                <form role="form" enctype="multipart/form-data" action="{% url 'EditarDiagObser' diagnostico.id_diag %}" method="post">
-                                                                    {% endif %}
-                                                                    <form class="centrar-form " enctype="multipart/form-data" method="post">
-                                                                        {% csrf_token %}
-                                                                        <div class="col-sm-12" class="form-group">
-                                                                            <div class="content-titulos">
-                                                                                <h3><b>Califica los resultados:<b></h3>
-                                                                                            </div>
-                                                                                            <br>
-                                                                                            <div class="col-sm-12">
-                                                                                                <label for="{{form1.descripcion.name}}">{{form1.descripcion.label}}</label>
-                                                                                                <!--<input class="form-control"  type="text" name="apellido" placeholder="Ingresar una observación" required>-->
-                                                                                                <textarea id="descripcion" name="descripcion" rows="3" cols="18" style="border:solid 1px black;">Escribe aquí tus observaciones</textarea>
-                                                                                            </div>
-                                                                                            <input  class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Aceptar">
-                                                                                            <input  class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Rechazar">
-                                                                                            <!--<div class="col-md-6 col-md-offset-1">
-                                                                                                <div class="form-group" style="text-align:center;">
-                                                                                                    <br><button class="btn btn-primary " id="botonsi" type="submit">Aceptar</button></br>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-md-6 col-md-offset-1">
-                                                                                                <div class="form-group" style="text-align:center;">
-                                                                                                    <br><button class="btn btn-primary " id="botonno" type="submit">Rechazar</button></br>
-                                                                                                </div>
-                                                                                            </div>-->
-                                                                                        </div>
-                                                                    
-                                                                                    </form>
-                                                                                </div>
-                                                                            </div>
+                                                <!--<div class="col-xl-10">
+                                                            <div class="percent-chart">
+                                                                <canvas id="percent-chart"></canvas>
+                                                            </div>
+                                                        </div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="au-card chart-percent-card">
+                                        <div class="au-card-inner">
+                                            <div class="row no-gutters">
+                                                <!--<div class="col-xl-12">-->
+                                                {% if object == false %} {% csrf_token %}
+                                                <!--/diagnostico/EditarDiagObser/{{data1PD.id_diag}}-->
+                                                <form role="form" enctype="multipart/form-data" action="{% url 'EditarDiagObser' diagnostico.id_diag%}" method="post">
+                                                    {% endif %}
+                                                    <form class="centrar-form " enctype="multipart/form-data" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group">
+                                                            <div class="content-titulos">
+                                                                <h3><b>Califica los resultados:<b></h3>
+                                                            </div>
+                                                            <br>
+                                                            <div >
+                                                                <label for="{{form1.descripcion.name}}">{{form1.descripcion.label}}</label>
+                                                                <!--<input class="form-control"  type="text" name="apellido" placeholder="Ingresar una observación" required>-->
+                                                                <textarea id="descripcion" name="descripcion" rows="3" cols="10" style="border:solid 1px black;">Escribe aquí tus observaciones</textarea>
+                                                            </div>
+                                                            <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Aceptar">
+                                                            <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Rechazar">
+                                                            <!--<div class="col-md-6 col-md-offset-1">
+                                                                <div class="form-group" style="text-align:center;">
+                                                                    <br><button class="btn btn-primary " id="botonsi" type="submit">Aceptar</button></br>
                                                                 </div>
                                                             </div>
-                                                    </div>
-                                                    <!--<div class="col-xl-10">
-                                                        <div class="percent-chart">
-                                                            <canvas id="percent-chart"></canvas>
+                                                            <div class="col-md-6 col-md-offset-1">
+                                                                <div class="form-group" style="text-align:center;">
+                                                                    <br><button class="btn btn-primary " id="botonno" type="submit">Rechazar</button></br>
+                                                                </div>
+                                                            </div>-->
                                                         </div>
-                                                    </div>-->
+                                                                
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
+                                <div class="col-lg-16">
                                     <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
                                         <div class="au-card-title">
                                             <div class="bg-overlay bg-overlay--blue"></div>
@@ -358,55 +355,50 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
                                     </div>
                                     <!-- END DATA TABLE-->
-                                
+    
+                                </div>
+    
+    
                             </div>
-
-
+    
                         </div>
-
                     </div>
-                </div>
-            </div>
         </div>
     </div>
     <!-- END PAGE CONTAINER-->
-    
+
     <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
     </div>
     {% if listFeaturesToPredict %}
-        <script>
+    <script>
         var params = [];
         var pathImageOverlay = '/{{Overlay_image}}';
         console.log(pathImageOverlay);
         params["encodedImages"] = [pathImageOverlay];
-        params ["images"]  = [pathImageOverlay];
-        </script>
+        params["images"] = [pathImageOverlay];
+    </script>
     {% else %}
-        <h1>No hay datos disponibles</h1>
+    <h1>No hay datos disponibles</h1>
     {% endif %}
 
 </body>
 
 </html>
 <script>
-    function abrir_modal(url)
-    {
-        $('#popup').load(url, function()
-        {
-                $(this).modal('show');
+    function abrir_modal(url) {
+        $('#popup').load(url, function() {
+            $(this).modal('show');
         });
-        $('#popup').on('hidden.bs.modal', function (e) {
-          location.reload();
+        $('#popup').on('hidden.bs.modal', function(e) {
+            location.reload();
         });
-         return false;
+        return false;
     }
 </script>
-{% endblock %} 
-{% block extrajs %}
+{% endblock %} {% block extrajs %}
 <!-- Jquery JS-->
 <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
 <!-- Bootstrap JS-->

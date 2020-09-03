@@ -1,7 +1,6 @@
 <!-- Para cargar los archivos estaticos del proyecto-->
 {% load static %}
-<!DOCTYPE html>
-{% block content %}
+<!DOCTYPE html> {% block content %}
 <html lang="es">
 
 <head>
@@ -26,19 +25,19 @@
     <link href={% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %} rel="stylesheet" media="all">
 
     <!-- Main CSS-->
-    <link href={% static 'css/theme.css' %} rel="stylesheet" media="all"> 
+    <link href={% static 'css/theme.css' %} rel="stylesheet" media="all">
     <!-- Papaya CSS JS-->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <!-- iOS meta tags -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 
 
     <link rel="stylesheet" type="text/css" href="/static/css/papaya.css?build=1449" />
-    <script  src="/static/js/papaya.js?build=1449"></script>
+    <script src="/static/js/papaya.js?build=1449"></script>
 
     <title>BRAINJE</title>
 
@@ -49,7 +48,7 @@
 </head>
 
 <body>
-    
+
 
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
@@ -71,7 +70,7 @@
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                       
+
                         <li class="has-sub">
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-table"></i>Cargar Datos</a>
@@ -86,7 +85,7 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -96,7 +95,7 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Paciente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Paciente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
@@ -133,7 +132,7 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -143,11 +142,11 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
-                                </li>   
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -171,7 +170,7 @@
                                             <img src="{% static 'imagenes/avatar.png' %}" alt="John Doe" />
                                         </div>
                                         <div class="content">
-                                            <a  class="js-acc-btn" href="#">{{ user.get_full_name }}</a>
+                                            <a class="js-acc-btn" href="#">{{ user.get_full_name }}</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
                                             <div class="info clearfix">
@@ -205,17 +204,17 @@
             <div class="main-content">
                 <div class="container">
                     {% if messages %}
-                        <div class="col-sm-12">
-                            <div class="row ">
-                                {% for message in messages %}
-                                 <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-                                    <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
-                                    <p{% if message.tags %} class=""{% endif %}>{{ message }}</p>
-                                 </div>
-                                {% endfor %}
+                    <div class="col-sm-12">
+                        <div class="row ">
+                            {% for message in messages %}
+                            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                                <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
+                                <p{% if message.tags %} class="" {% endif %}>{{ message }}</p>
                             </div>
-
+                            {% endfor %}
                         </div>
+
+                    </div>
                     {% endif %}
 
                 </div>
@@ -227,94 +226,131 @@
                     </div>
                     <div class="papaya" data-params="params"></div>
                 </div>
-                
+
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-5">
                                 <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
                                     <div class="au-card-title">
                                         <div class="bg-overlay bg-overlay--blue"></div>
                                         <h3><i class="zmdi zmdi-assignment-check"></i>Resultado diagnóstico</h3>
                                     </div>
 
-                                        <div class="au-card chart-percent-card">
-                                            <div class="au-card-inner">
-                                                <h3 class="title-2 tm-b-5">Porcentaje (%)</h3>
-                                                <div class="row no-gutters">
-                                                    <div class="col-xl-2">
-                                                        <div class="chart-note-wrap">
-                                                            {% if data1PD %}
-                                                            <div class="chart-note mr-0 d-block">
-                                                                <span class="dot dot--blue"></span>
-                                                                <span><b>EP:</b> </span>
-                                                                <span>{{data1PD}}</span>
-                                                            </div>
-                                                            <div class="chart-note mr-0 d-block">
-                                                                <span class="dot dot--red"></span>
-                                                                <span><b>NO EP:</b>  </span>
-                                                                <span>{{data2Sano}}</span>
-                                                            </div>
-                                                            {% else %}
-                                                            <div class="chart-note mr-0 d-block">
-                                                                <span class="dot dot--blue"></span>
-                                                                <span><b>EP:</b> </span>
-                                                                <span>--</span>
-                                                            </div>
-                                                            <div class="chart-note mr-0 d-block">
-                                                                <span class="dot dot--red"></span>
-                                                                <span><b>NO EP:</b>  </span>
-                                                                <span>--</span>
-                                                            </div>
-                                                            {% endif %}
+                                    <div class="au-card chart-percent-card">
+                                        <div class="au-card-inner">
+                                            <h3 class="title-2 tm-b-5">Porcentaje (%)</h3>
+                                            <div class="row no-gutters">
+                                                <div class="col-xl-2">
+                                                    <div class="chart-note-wrap">
+                                                        {% if data1PD %}
+                                                        <div class="chart-note mr-0 d-block">
+                                                            <span class="dot dot--blue"></span>
+                                                            <span><b>EP:</b> </span>
+                                                            <span>{{data1PD}}</span>
                                                         </div>
+                                                        <div class="chart-note mr-0 d-block">
+                                                            <span class="dot dot--red"></span>
+                                                            <span><b>NO EP:</b>  </span>
+                                                            <span>{{data2Sano}}</span>
+                                                        </div>
+                                                        {% else %}
+                                                        <div class="chart-note mr-0 d-block">
+                                                            <span class="dot dot--blue"></span>
+                                                            <span><b>EP:</b> </span>
+                                                            <span>--</span>
+                                                        </div>
+                                                        <div class="chart-note mr-0 d-block">
+                                                            <span class="dot dot--red"></span>
+                                                            <span><b>NO EP:</b>  </span>
+                                                            <span>--</span>
+                                                        </div>
+                                                        {% endif %}
                                                     </div>
-                                                    <!--<div class="col-xl-10">
-                                                        <div class="percent-chart">
-                                                            <canvas id="percent-chart"></canvas>
-                                                        </div>
-                                                    </div>-->
+                                                </div>
+                                                <!--<div class="col-xl-10">
+                                                                <div class="percent-chart">
+                                                                    <canvas id="percent-chart"></canvas>
+                                                                </div>
+                                                            </div>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="au-card chart-percent-card">
+                                        <div class="au-card-inner">
+                                            <div class="row no-gutters">
+                                                <!--<div class="col-xl-12">-->
+                                                {% if object == false %} {% csrf_token %}
+                                                <!--/diagnostico/EditarDiagObser/{{data1PD.id_diag}}-->
+                                                <form role="form" enctype="multipart/form-data" action="{% url 'EditarDiagObser' diagnostico.id_diag%}" method="post">
+                                                    {% endif %}
+                                                    <form class="centrar-form " enctype="multipart/form-data" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group">
+                                                            <div class="content-titulos">
+                                                                <h3><b>Califica los resultados:<b></h3>
+                                                                </div>
+                                                                <br>
+                                                                <div >
+                                                                    <label for="{{form1.descripcion.name}}">{{form1.descripcion.label}}</label>
+                                                                    <!--<input class="form-control"  type="text" name="apellido" placeholder="Ingresar una observación" required>-->
+                                                                    <textarea id="descripcion" name="descripcion" rows="3" cols="10" style="border:solid 1px black;">Escribe aquí tus observaciones</textarea>
+                                                                </div>
+                                                                <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Aceptar">
+                                                                <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Rechazar">
+                                                                <!--<div class="col-md-6 col-md-offset-1">
+                                                                    <div class="form-group" style="text-align:center;">
+                                                                        <br><button class="btn btn-primary " id="botonsi" type="submit">Aceptar</button></br>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-md-offset-1">
+                                                                    <div class="form-group" style="text-align:center;">
+                                                                        <br><button class="btn btn-primary " id="botonno" type="submit">Rechazar</button></br>
+                                                                    </div>
+                                                                </div>-->
+                                                            </div>
+                                                                    
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                    <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
-                                        <div class="au-card-title">
-                                            <div class="bg-overlay bg-overlay--blue"></div>
-                                            <h3><i class="zmdi  zmdi-assignment"></i>Tabla de Características</h3>
-                                        </div>
-                                        <!-- DATA TABLE-->
-                                        <div class="au-inbox-wrap js-inbox-wrap"></div>
-                                        <div class="table-responsive m-b-40">
-                                            <table class="table table-top-campaign">
-                                                <tbody>
-                                                    {% if listFeaturesToPredict %}
-                                                        {% for feature,nameCols in listFeaturesToPredict %}
-                                                            <tr>
-                                                                <td>{{ nameCols }}</td>
-                                                                <td>{{ feature }}</td>
-                                                                <!--<td>{{ feature|floatformat:4 }}</td>-->
-                                                            </tr>
-                                                        {% endfor %}
-                                                    {% else %}
-                                                        <h1>No hay datos disponibles</h1>
-                                                    {% endif %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-
                                     </div>
-                                    <!-- END DATA TABLE-->
-                                
+                                    <div class="col-lg-16">
+                                        <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
+                                            <div class="au-card-title">
+                                                <div class="bg-overlay bg-overlay--blue"></div>
+                                                <h3><i class="zmdi  zmdi-assignment"></i>Tabla de Características</h3>
+                                            </div>
+                                            <!-- DATA TABLE-->
+                                            <div class="au-inbox-wrap js-inbox-wrap"></div>
+                                            <div class="table-responsive m-b-40">
+                                                <table class="table table-top-campaign">
+                                                    <tbody>
+                                                        {% if listFeaturesToPredict %}
+                                                            {% for feature,nameCols in listFeaturesToPredict %}
+                                                                <tr>
+                                                                    <td>{{ nameCols }}</td>
+                                                                    <td>{{ feature }}</td>
+                                                                    <!--<td>{{ feature|floatformat:4 }}</td>-->
+                                                                </tr>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            <h1>No hay datos disponibles</h1>
+                                                        {% endif %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- END DATA TABLE-->
+        
+                                    </div>
+        
+        
+                                </div>
+        
                             </div>
-
-
                         </div>
-
-                    </div>
-                </div>
             </div>
         </div>
     </div>

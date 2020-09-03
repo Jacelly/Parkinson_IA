@@ -1,7 +1,6 @@
 <!-- Para cargar los archivos estaticos del proyecto-->
 {% load static %}
-<!DOCTYPE html>
-{% block content %}
+<!DOCTYPE html> {% block content %}
 <html lang="es">
 
 <head>
@@ -26,26 +25,26 @@
     <link href={% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %} rel="stylesheet" media="all">
 
     <!-- Main CSS-->
-    <link href={% static 'css/theme.css' %} rel="stylesheet" media="all"> 
+    <link href={% static 'css/theme.css' %} rel="stylesheet" media="all">
     <!-- Papaya CSS JS-->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <!-- iOS meta tags -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 
 
     <link rel="stylesheet" type="text/css" href="/static/css/papaya.css?build=1449" />
-    <script  src="/static/js/papaya.js?build=1449"></script>
+    <script src="/static/js/papaya.js?build=1449"></script>
 
     <title>BRAINJE</title>
 
     <script>
-    var params = [];
-    params["encodedImages"] = ["{% static 'data/AICHAhr.nii'%}"];
-    params ["images"]  = ["{% static 'data/AICHAhr.nii'%}"];
+        var params = [];
+        params["encodedImages"] = ["{% static 'data/AICHAhr.nii'%}"];
+        params["images"] = ["{% static 'data/AICHAhr.nii'%}"];
     </script>
 
 
@@ -55,7 +54,7 @@
 </head>
 
 <body>
-    
+
 
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
@@ -77,7 +76,7 @@
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                       
+
                         <li class="has-sub">
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-table"></i>Cargar Datos</a>
@@ -92,7 +91,7 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -102,7 +101,7 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
@@ -139,7 +138,7 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -149,11 +148,11 @@
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
                                     <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
-                                </li>   
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -177,7 +176,7 @@
                                             <img src="{% static 'imagenes/avatar.png' %}" alt="John Doe" />
                                         </div>
                                         <div class="content">
-                                            <a  class="js-acc-btn" href="#">{{ user.get_full_name }}</a>
+                                            <a class="js-acc-btn" href="#">{{ user.get_full_name }}</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
                                             <div class="info clearfix">
@@ -211,19 +210,19 @@
             <div class="main-content">
                 <div class="container ">
                     {% if messages %}
-                        <div class="col-sm-10">
-                            <div class="row ">
+                    <div class="col-sm-10">
+                        <div class="row ">
 
-                                {% for message in messages %}
-                                 <div class="alert alert-success alert-dismissible">
-                                 <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
-                                <p{% if message.tags %} class="alert alert-success"{% endif %}>{{ message }}</p>
-
-                                 </div>
-                                {% endfor %}
+                            {% for message in messages %}
+                            <div class="alert alert-success alert-dismissible">
+                                <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
+                                <p{% if message.tags %} class="alert alert-success" {% endif %}>{{ message }}</p>
 
                             </div>
+                            {% endfor %}
+
                         </div>
+                    </div>
                     {% endif %}
                 </div>
                 <!--<div class="papaya" data-params="params"></div>-->
@@ -236,11 +235,11 @@
                         <br>
                         <form action="{% url 'diagnostico_busqueda' %}" method="get">
                             <div class="form-group form-header col-sm-12">
-                              <input  name="q"  style=" margin-top:5px; border-radius: 15px;"  type="text" class="form-control" placeholder="buscar">
-                              <button  style="border:1px solid transparent; background-color: transparent;height:20%;margin-top:15px"><img  src="/static/imagenes/buscar.png" alt="logo" style="margin-top:-10px; margin-left:10px; width: 20px; height:20px;"></button>
+                                <input name="q" style=" margin-top:5px; border-radius: 15px;" type="text" class="form-control" placeholder="buscar">
+                                <button style="border:1px solid transparent; background-color: transparent;height:20%;margin-top:15px"><img  src="/static/imagenes/buscar.png" alt="logo" style="margin-top:-10px; margin-left:10px; width: 20px; height:20px;"></button>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover " >
+                                <table class="table table-bordered table-hover ">
                                     <thead style="background-color: rgba(09, 124, 125, 0.9); color:white; font-weight: bold; text-align:center;">
                                         <tr>
                                             <td><b>Id</b></td>
@@ -250,55 +249,60 @@
                                             <td><b>Paciente</b></td>
                                             <td><b>Diagnóstico EP</b></td>
                                             <td><b>Diagnóstico NO-EP</b></td>
+                                            <td><b>Observación</b></td>
+                                            <td><b>Diagnostico</b></td>
                                             <td><b></b></td>
                                         </tr>
-                                        
+
                                     </thead>
                                     <tbody style="text-align:center;">
-                                        {% if object_list %}
-                                        {% for diagnostico in object_list %}
+                                        {% if object_list %} {% for diagnostico in object_list %}
                                         <tr>
-                                            <td >{{ diagnostico.id_diag}}</td>
+                                            <td>{{ diagnostico.id_diag}}</td>
                                             <td>
                                                 <a href="http://localhost:8000/media/{{diagnostico.id_mri}}">{{ diagnostico.id_mri }}</a>
-                                                
+
                                             </td>
                                             <td>
-                                                 <a href="http://localhost:8000/media/{{diagnostico.id_mask}}">{{ diagnostico.id_mask}}</a>
-                                                
+                                                <a href="http://localhost:8000/media/{{diagnostico.id_mask}}">{{ diagnostico.id_mask}}</a>
+
                                             </td>
                                             <td>
-                                                 <a href="http://localhost:8000/media/{{diagnostico.id_overlay}}">{{diagnostico.id_overlay}}</a>
-                                                
+                                                <a href="http://localhost:8000/media/{{diagnostico.id_overlay}}">{{diagnostico.id_overlay}}</a>
+
                                             </td>
                                             <td>{{ diagnostico.id_sujeto}}</td>
                                             <td>{{ diagnostico.porcentPD}}</td>
                                             <td>{{ diagnostico.porcentNoPD}}</td>
+                                            <td>{{ diagnostico.descripcion}}</td>
+                                            {% if diagnostico.is_parkinson %}
+                                            <td> Aprobado</td>
+                                            {% else %}
+                                            <td> Rechazado</td>
+                                            {% endif %}
                                             <td>
                                                 <a class="btn" onclick="return abrir_modal('/Diagnostico/EliminarDiagnosticoToDoctor/{{diagnostico.id_diag}}')">
-                                                    <img  src="/static/imagenes/eliminar.png" alt="logo" style=" margin-top:-10px; margin-left:10px; width: 25px; height:25px;">
+                                                    <img src="/static/imagenes/eliminar.png" alt="logo" style=" margin-top:-10px; margin-left:10px; width: 25px; height:25px;">
                                                 </a>
-
-                                            </td>       
+                                                <a class="btn" onclick="return abrir_modal('/Diagnostico/EditarDiagnosticoToDoctor/{{diagnostico.id_diag}}')">
+                                                    <i style="font-size:24px" class="fa">&#xf044;</i>
+                                                </a>
+                                            </td>
                                         </tr>
-                                        {% endfor %}
-                                        
-                                        {% else %}
+                                        {% endfor %} {% else %}
                                         <h1>No hay registros de diagnósticos</h1>
                                         {% endif %}
                                     </tbody>
-                                </table> 
+                                </table>
                             </div>
                             <ul class="pager">
                                 <li>
                                     {% if page_obj.has_previous %}
-                                     <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                                    {% endif %}
-                                    </li>
+                                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a> {% endif %}
+                                </li>
                                 <li>
                                     {% if page_obj.has_next %}
-                                     <a href="?page={{ page_obj.next_page_number }}">Next</a> 
-                                    {% endif %}
+                                    <a href="?page={{ page_obj.next_page_number }}">Next</a> {% endif %}
                                 </li>
                             </ul>
                         </form>
@@ -310,7 +314,7 @@
         </div>
     </div>
     <!-- END PAGE CONTAINER-->
-    
+
     <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
     </div>
@@ -318,20 +322,17 @@
 
 </html>
 <script>
-    function abrir_modal(url)
-    {
-        $('#popup').load(url, function()
-        {
-                $(this).modal('show');
+    function abrir_modal(url) {
+        $('#popup').load(url, function() {
+            $(this).modal('show');
         });
-        $('#popup').on('hidden.bs.modal', function (e) {
-          location.reload();
+        $('#popup').on('hidden.bs.modal', function(e) {
+            location.reload();
         });
-         return false;
+        return false;
     }
 </script>
-{% endblock %} 
-{% block extrajs %}
+{% endblock %} {% block extrajs %}
 <!-- Jquery JS-->
 <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
 <!-- Bootstrap JS-->
