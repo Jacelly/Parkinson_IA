@@ -15,9 +15,17 @@ urlpatterns = [
 	path('EditarDiagObser/<int:id_diag>', views.EditarDiagObser, name='EditarDiagObser'),
 	path('RegistroDiagEliminar/<int:id_diag>', views.RegistroDiagDelete, name='RegistroDiagDelete'),
 	path('RegistroDiagEditar/<int:id_diag>', views.EditarDiagObser, name='RegistroDiagEditar'),
-	path('EliminarDiagnostico/<pk>',views.EliminarDiagnostico.as_view(), name='EliminarDiagnostico'),
 	path('EditarDiagnostico/<pk>',views.EditarDiagnostico.as_view(), name='EditarDiagnostico'),
+	path('EliminarDiagnostico/<pk>',views.EliminarDiagnostico.as_view(), name='EliminarDiagnostico'),
 	path('filtroPacientes', views.busquedaDiagByPaciente, name='diagnostico_busqueda'),
 	path('EliminarDiagnosticoToDoctor/<pk>',views.EliminarDiagnosticoToDoctor.as_view(), name='EliminarDiagnosticoToDoctor'),
 	path('EditarDiagnosticoToDoctor/<pk>',views.EditarDiagnosticoToDoctor.as_view(), name='EditarDiagnosticoToDoctor'),
+
+	path('feedback_CargarMRI/',views.feedback_CargarMRI,name="feedback_CargarMRI"),
+	path('feedback_CargarCSV/',views.feedback_CargarCSV,name="feedback_CargarCSV"),
+	path('feedback_DiagHabla/',views.feedback_DiagHabla,name="feedback_DiagHabla"),
+	path('feedback_DiagMri/',views.feedback_DiagMri,name="feedback_DiagMri"),
+	path('feedback_ListDiagMri/',views.feedback_ListDiagMri,name="feedback_ListDiagMri"),
+	path('feedback_ListDiagMriToDoctor/',views.feedback_ListDiagMriToDoctor,name="feedback_ListDiagMriToDoctor"),
+	path('feedback_PrecisionesModelsML/',views.feedback_PrecisionesModelsML,name="feedback_PrecisionesModelsML")
 ]

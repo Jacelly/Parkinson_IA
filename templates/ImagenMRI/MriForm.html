@@ -15,7 +15,10 @@
         <meta charset="UTF-8">
         <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <!-- Jquery JS-->
+        <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
+        
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
     </head>
 	<body class="body">
 		<div class="modal-dialog modal-lg">
@@ -64,7 +67,9 @@
 				</form>
 			</div>
 		</div>
+        <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
+        </div>
    </body>
 </html>
 <script>
@@ -75,4 +80,5 @@
 		//location.href ='/home_administrador/';
 	});
 </script>
+
 {% endblock %}

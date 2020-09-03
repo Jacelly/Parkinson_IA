@@ -15,16 +15,19 @@
         <meta charset="UTF-8">
         <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
         <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <!-- Jquery JS-->
+        <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
+        
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
     </head>
 	<body class="body">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-lg" >
 			<div class="modal-content">
 				{% if object == false %}
 					{% csrf_token %}
 	                <form role="form" enctype="multipart/form-data" action="{% url 'registrarCliente'%}" method="post">
                 {% endif %}
-				<form class="centrar-form " enctype="multipart/form-data" method="post">
+				<form class="centrar-form " id="formulario1" enctype="multipart/form-data" method="post">
 					{% csrf_token %}
 					<div class="col-sm-12" class="form-group">
 						<div class="content-titulos">
@@ -41,7 +44,10 @@
 						</div>
 						<div class="col-md-10 col-md-offset-1">
 							<div class="form-group" style="text-align:center;">
-								<br><button class="btn btn-primary "type="submit">Guardar</button></br>
+								
+								<br><button  type="submit" class="btn btn-primary">Guardar</button></br>
+								<!--<a  class= "btn btn-primary"  onclick="return abrir_modal('/imagenMRI/MriRegister/')">Continuar</a>-->
+
 							</div>
 						</div>
 					
@@ -50,7 +56,9 @@
 				</form>
 			</div>
 		</div>
+        <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
+        </div>
    </body>
 </html>
 <script>
@@ -60,5 +68,26 @@
 		location.href =window.location.href;
 		//location.href ='/home_administrador/';
 	});
+</script>
+<script>
+    function abrir_modal(url)
+    {
+    	document.forms[0].submit()
+    	//document.forms[0].submit()
+    	//console.log(document.forms[0].submit())  //PERMITE HACER SUBMIT AL FORMULARIO
+        $('#popup').load(url, function()
+        {
+        		
+                $(this).modal('show');
+                //document.forms[0].submit()
+        });
+        $('#popup').on('hidden.bs.modal', function (e) {
+          	location.reload();
+        });
+        
+        
+
+         return false;
+    }
 </script>
 {% endblock %}

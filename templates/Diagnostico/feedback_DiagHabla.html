@@ -1,0 +1,69 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
+        
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    </head>
+    <body class="body">
+        <div class="modal-dialog modal-lg">
+    		<div class="modal-content">
+
+    			<form>
+    				{% csrf_token %}
+                    <div class="content-titulos">
+                        <div class="close" style="color:black;">x</div>
+                    </div>
+                    <div class="au-card chart-percent-card">
+                        <div class="content-titulos">
+                            <h1 content-titulos ><b>Aviso!</b> <i class="fas fa-comment"></i></h1>
+                        </div>
+                        <p align="left">Por favor, seguir los siguientes pasos para realizar un  diagnóstico de Enfermedad de Parkinson (EP) mediante estudio de nota de voz:
+                            <ul>
+                                <li>Primero, cargar el archivo CSV de caracteristicas.(<strong>"Cargar Datos"</strong> -> <strong>"Archivo Csv Habla"</strong>)</li>
+                                <li>Segundo,  ejecutar el diagnóstico de Parkinson.</li> (<strong>"Diagnóstico"</strong> -> <strong>"Enfermedad de Parkinson(EP) por caracteristicas de Habla"</strong>)
+                            </ul>
+                            Cumpliendo con los pasos enunciados, BrainJE mostrará los resultados del diagnóstico.
+                        </p> 
+                        <div class="content-titulos2" style="text-align:center;">
+                            <a  class= "btn btn-primary"  onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">ok</a>
+                        </div>
+
+                    </div>
+
+    				
+    			</form>
+    		</div>
+        </div>
+        <div id="popup" tabindex="-1" class="modal fade" role="dialog">
+
+        </div>
+	</body>
+</html>
+<script>
+    document.querySelector('.close').addEventListener('click',
+    function(){
+        document.querySelector('.modal-content').style.display='none';
+        location.href =window.location.href;
+    });
+</script>
+<script>
+    function abrir_modal(url)
+    {
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        $('#popup').on('hidden.bs.modal', function (e) {
+          location.reload();
+        });
+         return false;
+    }
+</script>
+{% endblock %}

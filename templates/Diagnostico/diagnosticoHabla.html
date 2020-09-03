@@ -62,7 +62,7 @@
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <a class="logo" href="index.html">
+                        <a class="logo" href="{% url 'home_administrador' %}">
                             <img src="{% static 'imagenes/brainje2_150x50.png' %}" alt="CoolAdmin" />
                         </a>
                         <button class="hamburger hamburger--slider" type="button">
@@ -82,10 +82,14 @@
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Paciente</a>
                                 </li>
                                 <li>
-                                    <a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>
+                                   <a onclick="return abrir_modal('/Diagnostico/feedback_CargarMRI')">Imagen MRI</a>
+                                </li>
+                                <li>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarCSV')">Archivo Csv Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -94,11 +98,11 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                  <a onclick="return abrir_modal('/Diagnostico/feedback_DiagMri')">Enfermedad de Parkinson(EP) por imagen MRI</a>
                                 </li>
                                 <li>
                                     <!--<a href="#">Estudio PD con Habla</a>-->
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson (EP) por caracteristicas de Habla</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_DiagHabla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -111,11 +115,7 @@
                                     <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
                                 </li>
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
-                                </li>
-                                <li>
-                                    <a href="#">Lista de Diagnóstico</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_ListDiagMri/')">Lista de Diagnóstico</a>
                                 </li>
                                 <li>
                                     <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
@@ -143,10 +143,14 @@
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Paciente</a>
                                 </li>
                                 <li>
-                                    <a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>
+                                   <a onclick="return abrir_modal('/Diagnostico/feedback_CargarMRI')">Imagen MRI</a>
+                                </li>
+                                <li>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarCSV')">Archivo Csv Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -155,11 +159,11 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson(EP) por imagen MRI</a>
+                                  <a onclick="return abrir_modal('/Diagnostico/feedback_DiagMri')">Enfermedad de Parkinson(EP) por imagen MRI</a>
                                 </li>
                                 <li>
                                     <!--<a href="#">Estudio PD con Habla</a>-->
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_DiagHabla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -172,11 +176,7 @@
                                     <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
                                 </li>
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Cliente</a>
-                                </li>
-                                <li>
-                                    <a href="#">Lista de Diagnóstico</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_ListDiagMri/')">Lista de Diagnóstico</a>
                                 </li>
                                 <!--<li>
                                     <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Diagnóstico de EP por Habla</a>
@@ -239,7 +239,22 @@
 
             <!-- MAIN CONTENT-->
             <div class="main-content">
-                
+                <div class="container">
+                    {% if messages %}
+                        <div class="col-sm-12">
+                            <div class="row ">
+                                {% for message in messages %}
+                                 <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                                    <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
+                                    <p{% if message.tags %} class=""{% endif %}>{{ message }}</p>
+                                 </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    {% endif %}
+
+                </div>
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <div class="row">

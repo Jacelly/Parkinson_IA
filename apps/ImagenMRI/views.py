@@ -70,7 +70,7 @@ def removeAll():
 
 def MriRegister(request):
     if request.method == 'POST':
-        form2 = MRIForm(request.POST or None,request.FILES or None)
+        form2 = MRIForm(request.POST ,request.FILES or None)
       
         case = ValidaImg(request)
         #Satisfactorio imagen nii o dcm o gz con los anteriores formatos

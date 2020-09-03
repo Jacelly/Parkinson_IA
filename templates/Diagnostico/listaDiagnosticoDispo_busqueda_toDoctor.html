@@ -83,7 +83,12 @@
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Paciente</a>
+                                </li>
+                                <li>
+                                    <!--<a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarMRI')">Imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -92,7 +97,8 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                   <!--<a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>-->
+                                   <a onclick="return abrir_modal('/Diagnostico/feedback_DiagMri')">Enfermedad de Parkinson(EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -101,12 +107,9 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
-                                </li>
+                                    <!--<a href="{% url 'diagnostico_disponibleToDoctor' %}">Lista de Diagnóstico</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_ListDiagMri/')">Lista de Diagnóstico</a>
+                                </li> 
                             </ul>
                         </li>
                     </ul>
@@ -130,7 +133,12 @@
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Paciente</a>
+                                </li>
+                                <li>
+                                    <!--<a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarMRI')">Imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -139,7 +147,8 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                   <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                   <!--<a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>-->
+                                   <a onclick="return abrir_modal('/Diagnostico/feedback_DiagMri')">Enfermedad de Parkinson(EP) por imagen MRI</a>
                                 </li>
                             </ul>
                         </li>
@@ -148,11 +157,8 @@
                                 <i class="fas fa-tachometer-alt"></i>Más opciones</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')" >Registrar Cliente</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
+                                    <!--<a href="{% url 'diagnostico_disponibleToDoctor' %}">Lista de Diagnóstico</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_ListDiagMri/')">Lista de Diagnóstico</a>
                                 </li>   
                             </ul>
                         </li>

@@ -1,0 +1,99 @@
+{% load static %}
+<!doctype html>
+{% block content %}
+<!--<div class="well well-xl">
+<form method="post" action=''enctype="multipart/form-data" >
+	{% csrf_token %}
+	{{ form.as_p }}
+
+	<button type="submit">Agregar</button>
+</form>
+</div>-->
+<html lang="en">
+    <head>
+    	<meta charset="UTF-8">
+        <meta charset="UTF-8">
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <!--<link rel="stylesheet"type="text/css"  href="{% static 'css/templates/pace-theme-mac-osx.tmpl.css' %}"/>-->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    </head>
+	<body class="body">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="content-Tablas">
+                    <div class="content-titulos">
+                        <div class="close"  style="color:black;">x</div>
+                        <h1><b> Calculo de precisiones de los modelos de ML del estudio de Habla en relación al Parkinson
+                    </div>
+                    <div class="card">
+                            <div class="card-body card-block">
+                                <p align="left">
+                                    Dar clic en <strong>"Continuar"</strong> y <strong>BrainJE</strong> en unos instantes mostrará sus resultados obtenidos...
+                                </p>
+                                <form action="{% url 'precisionesCsv_Habla' %}" method="get" class="form-horizontal">
+                                    <div class="row form-group">
+                                        <div class="col col-md-12">
+                                            <div id="myimageDiv" style="display:none"> 
+                                                <img src="{% static 'imagenes/barra_load1.gif' %}" alt="load image">
+                                            </div>
+                                            <div id="myimageDiv1" style="display:inline"> 
+                                                <img src="{% static 'imagenes/barra_load1_1.png' %}" alt="ceroimage">
+                                            </div>
+                                            <div class="input-group">
+
+                                                <div class="input-group-btn content-titulos">
+                                                    <button class="btn btn-primary" onclick="showHide()" >Continuar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                    </div>
+
+                </div>       
+			</div>
+		</div>
+        <div id="popup" tabindex="-1" class="modal fade" role="dialog">
+
+        </div>
+   </body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
+	});
+</script>
+
+{% block extrajs %}
+<!--<script src={% static 'js/pace.min.js' %}></script>-->
+<script type="text/javascript"> 
+    function showHide(){ 
+        var oImageDiv=document.getElementById('myimageDiv') 
+        var oImageDiv1=document.getElementById('myimageDiv1') 
+
+        oImageDiv.style.display=(oImageDiv.style.display=='none')?'inline':'none'
+        oImageDiv1.style.display=(oImageDiv.style.display=='inline')?'none':'inline'
+    } 
+    function abrir_modal(url)
+    {
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
+        });
+        $('#popup').on('hidden.bs.modal', function (e) {
+          location.reload();
+        });
+         return false;
+    }
+
+</script>
+
+{% endblock %}
+
+{% endblock %}

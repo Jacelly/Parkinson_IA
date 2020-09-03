@@ -416,7 +416,6 @@ def extraerCaracteristicas(Final_MASK_image_path,name):
                     round(shape_stats.GetPhysicalSize(i), 2),
                     round(shape_stats.GetElongation(i), 2),
                     round(shape_stats.GetFlatness(i), 2)) for i in intensity_stats.GetLabels()]
-    print('fffffff',stats_list)
     cols=["Curtosis_intensidad",
         #"Área_intensidad",
         "Redondez_intensidad",
@@ -430,7 +429,7 @@ def extraerCaracteristicas(Final_MASK_image_path,name):
     stats = pd.DataFrame(data=stats_list, index=intensity_stats.GetLabels(), columns=cols)
     #stats.describe()
     xpru=stats.mean()
-    print(xpru)
+    #print(xpru)
     stats_list = [ (
                               nombrePaciente,
                               round(xpru[0], 2),
@@ -465,7 +464,6 @@ def saveMRINiftytoJPG(PathSource,PathFolderfinal,Finalname,format):
     nii_data = my_img.get_fdata()
     z=nii_data.shape[2]
     n=len(nii_data.shape)
-    print(n)
     if n==3:
       if z==1:
         im = Image.fromarray(nii_data[:,:,z-1 ].astype(np.uint8))
@@ -646,7 +644,7 @@ def getMascaraIntensidad(Flair,MaskB,pathFolderfinal):
     mask_new.SetMetaData(k,v)
     #print("({0}) = = \"{1}\"".format(k,v))
   List_MASK_image_path=MASK_image_path.split("/")
-  print(List_MASK_image_path[2])
+  #print(List_MASK_image_path[2])
   filename_resultImage = pathFolderfinal+"Product_" + List_MASK_image_path[2]
   #sitk.WriteImage(mask_new, "media/ImagenesMascaras/ProductP_3415.nii.gz" )
   sitk.WriteImage(mask_new, filename_resultImage)
@@ -812,10 +810,10 @@ def diagnosticoFinalPD_MRI(listFeaturesToPredict):
   listFeaturesToPredict1=list()
   for i in listFeaturesToPredict:
     lista1=list(i)
-    print(list())
+    #print(list())
   lista1.pop(0)
   listFeaturesToPredict1.append(lista1) #convierto la tupla de features a lista de lista de features
-  print(listFeaturesToPredict1)
+  #print(listFeaturesToPredict1)
   clf_from_joblib=joblib.load('media/models/ClasificadorPDMRI_49.pkl')
   pred2=clf_from_joblib.predict(listFeaturesToPredict1)
   print(pred2)
@@ -828,13 +826,13 @@ def diagnosticoFinalPD_MRI(listFeaturesToPredict):
   return str(round(porcentajePD, 2)*100) + "%" ,str(round(porcentajeH,2)*100) + "%"
 #View para calcular las precisiones de los modelos de ML para la clasificacion
 def precisionesCsv_Habla(request):
-    print("ONSERVA BRO",CSV.objects.last())
+    #print("ONSERVA BRO",CSV.objects.last())
     #names=''
     #results = list()
     #results1 = list()
     if(CSV.objects.last()):
         instanciaCsv=CSV.objects.last()
-        print("entro",CSV.objects.last())
+        #print("entro",CSV.objects.last())
         path="media/"+str(instanciaCsv.documento)
         X,y=SeparaDataCsv(path)
         names,results,results1=medirPresicionScoresModelos(X,y)
@@ -895,28 +893,27 @@ def diagnoticoPorMRI(request):
 
     diagnosticoPD = 0
     diagnosticoSano = 0
-    print("VERIFICA=============>",request)
+    print("Existe una T1 en la BD? ",ImagenMRI.objects.filter(tipo='T1').exists())
+    if(ImagenMRI.objects.filter(tipo='T1').exists()==False or ImagenMRI.objects.filter(tipo='FLAIR').exists()==False):
+
+        if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
+            messages.error(request, 'Su diagnóstico, no se a podido completar..Intentalo de nuevo!')
+            return redirect('home_doctor')
+        messages.error(request, 'Su diagnóstico, no se a podido completar,Asegurese de ingresar las imagenes MRI primero...Intentalo de nuevo!')
+        return redirect('home_administrador')
+
+    instanciaUltimaT1=ImagenMRI.objects.filter(tipo='T1').last()
+    instanciaUltimaFLAIR=ImagenMRI.objects.filter(tipo='FLAIR').last()
+    instanciaSujeto=Sujeto.objects.get(id_sujeto=instanciaUltimaT1.id_sujeto_id)
+
+    T1_image = instanciaUltimaT1.imagen.path
+    FLAIR_image = instanciaUltimaFLAIR.imagen.path
+
+    MASK_image_Name = 'M_'+ str(instanciaSujeto.nombre) + str(instanciaSujeto.apellido) + '.nii'  #debe ser en .nii para que funcione rapido y bien
+    generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image_Name,Path_MASK_folder1) #Genera mascara binaria
+    print("VERIFICA=============>",request.method)
     if request.method == 'GET': 
-        print("YAA FUE",ImagenMRI.objects.filter(tipo='T1').exists())
-        if(ImagenMRI.objects.filter(tipo='T1').exists()==False or
-        ImagenMRI.objects.filter(tipo='FLAIR').exists()==False):
-
-            if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
-                messages.error(request, 'Su diagnóstico, no se a podido completar..Intentalo de nuevo!')
-                return redirect('home_doctor')
-            messages.error(request, 'Su diagnóstico, no se a podido completar,Asegurese de ingresar las imagenes MRI primero...Intentalo de nuevo!')
-            return redirect('home_administrador')
-
-        instanciaUltimaT1=ImagenMRI.objects.filter(tipo='T1').last()
-        instanciaUltimaFLAIR=ImagenMRI.objects.filter(tipo='FLAIR').last()
-        instanciaSujeto=Sujeto.objects.get(id_sujeto=instanciaUltimaT1.id_sujeto_id)
-
-        T1_image = instanciaUltimaT1.imagen.path
-        FLAIR_image = instanciaUltimaFLAIR.imagen.path
-
-        MASK_image_Name = 'M_'+ str(instanciaSujeto.nombre) + str(instanciaSujeto.apellido) + '.nii'  #debe ser en .nii para que funcione rapido y bien
-        generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image_Name,Path_MASK_folder1) #Genera mascara binaria
-
+        #generateMaskTwoArgument(FLAIR_image, T1_image, model_path, MASK_image_Name,Path_MASK_folder1) #Genera mascara binaria
         Path_MASK_folder = 'media/ImagenesMascarasBinarias/'+MASK_image_Name
         getMascaraIntensidad(FLAIR_image,Path_MASK_folder,Path_MASK_folder_Int) #Genera mascara con intensidades corregida
 
@@ -946,14 +943,14 @@ def diagnoticoPorMRI(request):
         if(Overlay.objects.filter(imagen=PathNameImageOverlay_SaveTable).exists()==False):
             Overlay.objects.create(imagen=PathNameImageOverlay_SaveTable,id_mri=instanciaUltimaFLAIR,id_mask=instanciaMask)
 
-        print(TablaCaracteristicas.objects.filter(curtosisI=listFeaturesToPredict[1]).exists(),
+        '''print(TablaCaracteristicas.objects.filter(curtosisI=listFeaturesToPredict[1]).exists(),
             TablaCaracteristicas.objects.filter(redondezI=listFeaturesToPredict[2]).exists(),
             TablaCaracteristicas.objects.filter(perimetroI=listFeaturesToPredict[3]).exists(),
             TablaCaracteristicas.objects.filter(varianzaI=listFeaturesToPredict[4]).exists(),
             TablaCaracteristicas.objects.filter(desviEstandI=listFeaturesToPredict[5]).exists(),
             TablaCaracteristicas.objects.filter(volumenF=listFeaturesToPredict[6]).exists(),
             TablaCaracteristicas.objects.filter(enlogacionF=listFeaturesToPredict[7]).exists(),
-            TablaCaracteristicas.objects.filter(flagnessF=listFeaturesToPredict[8]).exists())
+            TablaCaracteristicas.objects.filter(flagnessF=listFeaturesToPredict[8]).exists())'''
 
         if((TablaCaracteristicas.objects.filter(curtosisI=listFeaturesToPredict[1]).exists()==False) and
             (TablaCaracteristicas.objects.filter(redondezI=listFeaturesToPredict[2]).exists()==False) and
@@ -986,9 +983,9 @@ def diagnoticoPorMRI(request):
         return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'data1PD':diagnosticoPD,'data2Sano':diagnosticoSano,'Overlay_image':PathNameImageOverlay,'listFeaturesToPredict':zip(listFeaturesToPredict,colsNamesFeatures),'diagnostico':instanciaDiag}) 
     print(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists())
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
-        messages.success(request, 'Su diagnóstico se ha completado con éxito.')
+        #messages.success(request, 'Su diagnóstico se ha completado con éxito.')
         return redirect('home_doctor')
-    messages.success(request, 'Su diagnóstico se ha completado con éxito.')
+    #messages.success(request, 'Su diagnóstico se ha completado con éxito.')
     return redirect('home_administrador')
 
 #View para mostrar lista de diagnosticos realizados
@@ -1015,7 +1012,6 @@ def RegistroDiagDelete(request, id_diag):
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
         return render(request, 'Diagnostico/eliminarRegistroDiagToDoctor.html',{'instancia':instancia})
     return render(request, 'Diagnostico/eliminarRegistroDiag.html',{'instancia':instancia})
-
 #View para eliminar diagnostico de un paciente 
 def EditarDiagObser(request, id_diag):
     form1 = DiagnosticoForm(request.POST)#form1---->descripcion y es_parkinson
@@ -1023,6 +1019,7 @@ def EditarDiagObser(request, id_diag):
     if request.method == 'POST':
         instancia.descripcion = request.POST.get('descripcion', None)
         opcion=request.POST.get('is_parkinson', None)
+        print("OBSERVA: ",instancia,opcion)
         if(opcion=="Aceptar"):
             instancia.is_parkinson = True
         else:
@@ -1039,7 +1036,7 @@ def EditarDiagObser(request, id_diag):
         #return redirect('diagnoticoPorMRI')
         return redirect('diagnostico_disponible')
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
-        return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'instancia':instancia})
+        return render(request, 'Diagnostico/diagnosticoPD_MRI_toDoctor.html',{'instancia':instancia})
     return render(request, 'Diagnostico/diagnosticoPD_MRI.html',{'instancia':instancia})
 
 class EditarDiagnostico(DeleteView):
@@ -1050,7 +1047,6 @@ class EditarDiagnosticoToDoctor(DeleteView):
     model = Diagnostico
     template_name = 'Diagnostico/editarRegistroDiagToDoctor.html'
     success_url = reverse_lazy('diagnostico_disponible')
-
 class EliminarDiagnostico(DeleteView):
     model = Diagnostico
     template_name = 'Diagnostico/eliminarRegistroDiag.html'
@@ -1062,23 +1058,44 @@ class EliminarDiagnosticoToDoctor(DeleteView):
 #View para buscar un diagnostico nombre de paciente
 def busquedaDiagByPaciente(request):
     q = request.GET.get('q','')
-    print("mira",q)
     pacienteID=0
     if(Sujeto.objects.filter(nombre__startswith=q)):
-        print("aaaaaaaaaaaaaaaaaaaa")
         pacienteID=Sujeto.objects.get(nombre__startswith=q).id_sujeto
     if(Sujeto.objects.filter(apellido__startswith=q)):
-        print("bbbbbbbbbbbbbbbbbbbb")
         pacienteID=Sujeto.objects.get(apellido__startswith=q).id_sujeto
 
     DiagBypacienteID=Diagnostico.objects.filter(id_sujeto=pacienteID)
     if(DiagBypacienteID and q!=""):
-      print("okkk1111",DiagBypacienteID[0].id_sujeto)
       diagnosticos=DiagBypacienteID
-      print(diagnosticos)
     else:
       diagnosticos = ""
 
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
         return render(request, 'Diagnostico/listaDiagnosticoDispo_busqueda_toDoctor.html', {'diagnosticos': diagnosticos ,'busqueda':q})
     return render(request, 'Diagnostico/listaDiagnosticoDispo_busqueda.html', {'diagnosticos': diagnosticos ,'busqueda':q})
+
+ #view feeback de usuario opcion cargar MRI
+def feedback_CargarMRI(request):
+    return render(request,'Diagnostico/feedback_CargarMRI.html')
+
+ #view feeback de usuario opcion cargar CSV
+def feedback_CargarCSV(request):
+    return render(request,'Diagnostico/feedback_CargarCSV.html')
+
+ #view feeback de usuario opcion diagnostico por habla
+def feedback_DiagHabla(request):
+    return render(request,'Diagnostico/feedback_DiagHabla.html')
+
+ #view feeback de usuario opcion diagnostico por MRI
+def feedback_DiagMri(request):
+    return render(request,'Diagnostico/feedback_DiagMRI.html')
+
+ #view feeback de usuario opcion diagnostico por MRI
+def feedback_ListDiagMri(request):
+    return render(request,'Diagnostico/feedback_ListDiag.html')
+def feedback_ListDiagMriToDoctor(request):
+    return render(request,'Diagnostico/feedback_ListDiagToDoctor.html')
+
+ #view feeback de usuario opcion precisiones de los modelos ML para estudio del Habla
+def feedback_PrecisionesModelsML(request):
+    return render(request,'Diagnostico/barraCargaPrecisionesML.html')

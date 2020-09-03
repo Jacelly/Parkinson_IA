@@ -1,6 +1,7 @@
 <!-- Para cargar los archivos estaticos del proyecto-->
 {% load static %}
-<!DOCTYPE html> {% block content %}
+<!DOCTYPE html>
+{% block content %}
 <html lang="es">
 
 <head>
@@ -25,26 +26,26 @@
     <link href={% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %} rel="stylesheet" media="all">
 
     <!-- Main CSS-->
-    <link href={% static 'css/theme.css' %} rel="stylesheet" media="all">
+    <link href={% static 'css/theme.css' %} rel="stylesheet" media="all"> 
     <!-- Papaya CSS JS-->
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- iOS meta tags -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 
 
     <link rel="stylesheet" type="text/css" href="/static/css/papaya.css?build=1449" />
-    <script src="/static/js/papaya.js?build=1449"></script>
+    <script  src="/static/js/papaya.js?build=1449"></script>
 
     <title>BRAINJE</title>
 
     <script>
-        var params = [];
-        params["encodedImages"] = ["{% static 'data/AICHAhr.nii'%}"];
-        params["images"] = ["{% static 'data/AICHAhr.nii'%}"];
+    var params = [];
+    params["encodedImages"] = ["{% static 'data/AICHAhr.nii'%}"];
+    params ["images"]  = ["{% static 'data/AICHAhr.nii'%}"];
     </script>
 
 
@@ -54,7 +55,7 @@
 </head>
 
 <body>
-
+    
 
     <div class="page-wrapper">
         <!-- HEADER MOBILE-->
@@ -76,16 +77,21 @@
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-
+                       
                         <li class="has-sub">
                             <a class="js-arrow" href="#">
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Paciente</a>
                                 </li>
                                 <li>
-                                    <a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarMRI')">Imagen MRI</a>
+                                    <!--onclick="return abrir_modal('/imagenMRI/MriRegister/')"-->
+                                </li>
+                                <li>
+                                   <a onclick="return abrir_modal('/Diagnostico/feedback_CargarCSV')">Archivo Csv Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -94,11 +100,11 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson (EP) por imagen MRI</a>
+                                  <a onclick="return abrir_modal('/Diagnostico/feedback_DiagMri')">Enfermedad de Parkinson(EP) por imagen MRI</a>
                                 </li>
                                 <li>
                                     <!--<a href="#">Estudio PD con Habla</a>-->
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson (EP) por caracteristicas de Habla</a>
+                                     <a onclick="return abrir_modal('/Diagnostico/feedback_DiagHabla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -111,11 +117,7 @@
                                     <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
                                 </li>
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Paciente</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_ListDiagMri/')">Lista de Diagnóstico</a>
                                 </li>
                                 <li>
                                     <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
@@ -143,10 +145,16 @@
                                 <i class="fas fa-table"></i>Cargar Datos</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>
+                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
+                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Paciente</a>
                                 </li>
                                 <li>
-                                    <a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>
+                                    <!--<a  onclick="return abrir_modal('/imagenMRI/MriRegister/')">Imagen MRI</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarMRI')">Imagen MRI</a>
+                                </li>
+                                <li>
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_CargarCSV')">Archivo Csv Habla</a>
+                                    <!--<a onclick="return abrir_modal('/Archivo/documentoAdd/')">Archivo Csv Habla</a>-->
                                 </li>
                             </ul>
                         </li>
@@ -155,11 +163,13 @@
                                 <i class="fas fa-chart-bar"></i>Diagnóstico</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
                                 <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson(EP) por imagen MRI</a>
+                                    <!--<a onclick="return abrir_modal('/Diagnostico/barraCargaModeloDiagPorMRI')">Enfermedad de Parkinson(EP) por imagen MRI</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_DiagMri')">Enfermedad de Parkinson(EP) por imagen MRI</a>
+                                    
                                 </li>
                                 <li>
-                                    <!--<a href="#">Estudio PD con Habla</a>-->
-                                    <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
+                                    <!--<a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_DiagHabla/')">Enfermedad de Parkinson(EP) por caracteristicas de Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -172,17 +182,15 @@
                                     <a onclick="return abrir_modal('/user/registrarDoctor/')">Registrar Doctor</a>
                                 </li>
                                 <li>
-                                    <!--<a href="{% url 'registrar_Doctor' %}">Registrar Doctor</a>-->
-                                    <a onclick="return abrir_modal('/sujeto/registrarCliente/')">Registrar Paciente</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>
+                                    <!--<a href="{% url 'diagnostico_disponible' %}">Lista de Diagnóstico</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_ListDiagMri/')">Lista de Diagnóstico</a>
                                 </li>
                                 <!--<li>
                                     <a onclick="return abrir_modal('/Diagnostico/pruebasMLCsv_Habla/')">Diagnóstico de EP por Habla</a>
                                 </li>-->
                                 <li>
-                                    <a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>
+                                    <!--<a onclick="return abrir_modal('/Diagnostico/precisionesCsv_Habla/')">Precisiones de los modelos ML para EP por Habla</a>-->
+                                    <a onclick="return abrir_modal('/Diagnostico/feedback_PrecisionesModelsML/')">Precisiones de los modelos ML para EP por Habla</a>
                                 </li>
                             </ul>
                         </li>
@@ -207,7 +215,7 @@
                                             <img src="{% static 'imagenes/avatar.png' %}" alt="John Doe" />
                                         </div>
                                         <div class="content">
-                                            <a class="js-acc-btn" href="#">Usuario</a>
+                                            <a  class="js-acc-btn" href="#">Usuario</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
                                             <div class="info clearfix">
@@ -240,18 +248,24 @@
             <!-- MAIN CONTENT-->
             <div class="main-content">
                 <div class="container">
-                    {% if messages %}
-                    <div class="col-sm-12">
-                        <div class="row ">
-                            {% for message in messages %}
-                            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
-                                <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
-                                <p{% if message.tags %} class="" {% endif %}>{{ message }}</p>
+                    <!--{% if messages %}
+                        <div class="col-sm-12">
+                            <div class="row ">
+                                {% for message in messages %}
+                                 <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                                    <button type="button" class="close alert-dismissable" data-dismiss="alert">&times;</button>
+                                    <p {% if message.tags %} class=""{% endif %}>{{ message }}</p>
+                                 </div>
+                                {% endfor %}
                             </div>
-                            {% endfor %}
-                        </div>
 
-                    </div>
+                        </div>
+                    {% endif %}-->
+                    {% if messages %}
+                        <div class="col-sm-10">
+                            <div class="row ">
+                            </div>
+                        </div>
                     {% endif %}
 
                 </div>
@@ -276,127 +290,89 @@
                                         <h3><i class="zmdi zmdi-assignment-check"></i>Resultado diagnóstico</h3>
                                     </div>
 
-                                    <div class="au-card chart-percent-card">
-                                        <div class="au-card-inner">
-                                            <h3 class="title-2 tm-b-5">Porcentaje (%)</h3>
-                                            <div class="row no-gutters">
-                                                <div class="col-xl-2">
-                                                    <div class="chart-note-wrap">
-                                                        <div class="chart-note mr-0 d-block">
-                                                            <span class="dot dot--blue"></span>
-                                                            <span>EP</span>
-                                                        </div>
-                                                        <div class="chart-note mr-0 d-block">
-                                                            <span class="dot dot--red"></span>
-                                                            <span>NO EP</span>
+                                        <div class="au-card chart-percent-card">
+                                            <div class="au-card-inner">
+                                                <h3 class="title-2 tm-b-5">Porcentaje (%)</h3>
+                                                <div class="row no-gutters">
+                                                    <div class="col-xl-2">
+                                                        <div class="chart-note-wrap">
+                                                            <div class="chart-note mr-0 d-block">
+                                                                <span class="dot dot--blue"></span>
+                                                                <span>EP</span>
+                                                            </div>
+                                                            <div class="chart-note mr-0 d-block">
+                                                                <span class="dot dot--red"></span>
+                                                                <span>NO EP</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <!--<div class="col-xl-10">
+                                                    <!--<div class="col-xl-10">
                                                         <div class="percent-chart">
                                                             <canvas id="percent-chart"></canvas>
                                                         </div>
                                                     </div>-->
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="au-card chart-percent-card">
-                                        <div class="au-card-inner">
-                                            <div class="row no-gutters">
-                                                <!--<div class="col-xl-12">-->
-                                                {% if object == false %} {% csrf_token %}
-                                                <!--/diagnostico/EditarDiagObser/{{data1PD.id_diag}}-->
-                                                <form role="form" enctype="multipart/form-data" action="" method="post">
-                                                    {% endif %}
-                                                    <form class="centrar-form " enctype="multipart/form-data" method="post">
-                                                        {% csrf_token %}
-                                                        <div class="form-group">
-                                                            <div class="content-titulos">
-                                                                <h3><b>Califica los resultados:<b></h3>
-                                                        </div>
-                                                        <br>
-                                                        <div >
-                                                            <label for="{{form1.descripcion.name}}">{{form1.descripcion.label}}</label>
-                                                            <!--<input class="form-control"  type="text" name="apellido" placeholder="Ingresar una observación" required>-->
-                                                            <textarea id="descripcion" name="descripcion" rows="3" cols="10" style="border:solid 1px black;">Escribe aquí tus observaciones</textarea>
-                                                        </div>
-                                                        <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Aceptar">
-                                                        <input style="text-align:center;" class="btn btn-primary" id="is_parkinson" name="is_parkinson" type="submit" value="Rechazar">
-                                                        <!--<div class="col-md-6 col-md-offset-1">
-                                                            <div class="form-group" style="text-align:center;">
-                                                                <br><button class="btn btn-primary " id="botonsi" type="submit">Aceptar</button></br>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-md-offset-1">
-                                                            <div class="form-group" style="text-align:center;">
-                                                                <br><button class="btn btn-primary " id="botonno" type="submit">Rechazar</button></br>
-                                                            </div>
-                                                        </div>-->
-                                                    </div>
-                                                            
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
-                                    <div class="au-card-title">
-                                        <div class="bg-overlay bg-overlay--blue"></div>
-                                        <h3><i class="zmdi  zmdi-assignment"></i>Tabla de Características</h3>
+                            <div class="col-lg-6">
+                                    <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
+                                        <div class="au-card-title">
+                                            <div class="bg-overlay bg-overlay--blue"></div>
+                                            <h3><i class="zmdi  zmdi-assignment"></i>Tabla de Características</h3>
+                                        </div>
+                                        <!-- DATA TABLE-->
+                                        <div class="au-inbox-wrap js-inbox-wrap"></div>
+                                        <div class="table-responsive m-b-40">
+                                            <table class="table table-top-campaign">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>1. Nombre</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>2. Curtosis (intensidad)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>3. Redondez (intensidad)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>4. Perimetro[nm] (intensidad)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>5. Varianza[nm^2] (intensidad)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>6. Desviación estandar[nm] (intensidad)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>7. Volumen[nm^3] (forma)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>8. Elongación[nm] (forma)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>9. Flatness (forma)</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>10. Cantidad lesiones</td>
+                                                        <td>---</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                    <!-- DATA TABLE-->
-                                    <div class="au-inbox-wrap js-inbox-wrap"></div>
-                                    <div class="table-responsive m-b-40">
-                                        <table class="table table-top-campaign">
-                                            <tbody>
-                                                <tr>
-                                                    <td>1. Nombre</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2. Curtosis (intensidad)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3. Redondez (intensidad)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>4. Perimetro[nm] (intensidad)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>5. Varianza[nm^2] (intensidad)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>6. Desviación estandar[nm] (intensidad)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>7. Volumen[nm^3] (forma)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>8. Elongación[nm] (forma)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>9. Flatness (forma)</td>
-                                                    <td>---</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>10. Cantidad lesiones</td>
-                                                    <td>---</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <!-- END DATA TABLE-->
-
+                                    <!-- END DATA TABLE-->
+                                
                             </div>
 
 
@@ -404,42 +380,45 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
-        <!-- END PAGE CONTAINER-->
+    </div>
+    <!-- END PAGE CONTAINER-->
+    
+    <div id="popup" tabindex="-1" class="modal fade" role="dialog">
 
-        <div id="popup" tabindex="-1" class="modal fade" role="dialog">
-
-        </div>
+    </div>
 </body>
 
 </html>
 <script>
-    function abrir_modal(url) {
-        $('#popup').load(url, function() {
-            $(this).modal('show');
+    function abrir_modal(url)
+    {
+        $('#popup').load(url, function()
+        {
+                $(this).modal('show');
         });
-        $('#popup').on('hidden.bs.modal', function(e) {
-            location.reload();
+        $('#popup').on('hidden.bs.modal', function (e) {
+          location.reload();
         });
-        return false;
+         return false;
     }
 </script>
 <script>
     document.querySelector('.close').addEventListener('click',
-        function() {
-            document.querySelector('.modal-content').style.display = 'none';
-            location.href = window.location.href;
-        });
+    function(){
+        document.querySelector('.modal-content').style.display='none';
+        location.href =window.location.href;
+    });
 
     document.querySelector('.close11').addEventListener('click',
-        function() {
-
-            location.href = '/home_administrador/';
-        });
+    function(){
+    
+        location.href ='/home_administrador/';
+    });
 </script>
-{% endblock %} {% block extrajs %}
+{% endblock %} 
+{% block extrajs %}
 <!-- Jquery JS-->
 <script src={% static 'vendor/jquery-3.2.1.min.js' %}></script>
 <!-- Bootstrap JS-->

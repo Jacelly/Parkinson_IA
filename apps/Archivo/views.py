@@ -4,17 +4,18 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from apps.Archivo.forms import DocumentoForm
 from apps.Archivo.models import CSV
+from apps.Doctor.models import Doctor
 from django.contrib import messages
 # Create your views here.
 
 def DocumentoAdd(request):
     if request.method == 'POST':
-        form = DocumentoForm(request.POST or None ,request.FILES or None)
+        form = DocumentoForm(request.POST ,request.FILES or None)
         if form.is_valid():
             form.save()
 
             if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
-               #messages.success(request, 'Su documento ha sido creado con éxito.')
+               messages.success(request, 'Su documento ha sido creado con éxito.')
                return redirect('home_doctor')
             #messages.success(request, 'Su documento ha sido creado con éxito.')
             return redirect('home_administrador')
@@ -28,12 +29,12 @@ def DocumentoAdd(request):
         form = DocumentoForm()
 
     if(Doctor.objects.filter(usuario_ptr_id=request.user.id).exists()):
-        messages.success(request, 'Su documento ha sido creado con éxito.')
+        #messages.success(request, 'Su documento ha sido creado con éxito.')
         return render(request, 'archivo/formAddCsv.html', {
             'form': form,
         })
 
-    messages.success(request, 'Su documento ha sido creado con éxito.')
+    #messages.success(request, 'Su documento ha sido creado con éxito.')
     return render(request, 'archivo/formAddCsv.html', {
         'form': form,
     })
