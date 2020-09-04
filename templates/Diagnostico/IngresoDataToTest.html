@@ -1,0 +1,61 @@
+
+{% load static %}
+<!doctype html>
+{% block content %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <link rel="stylesheet"type="text/css"  href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+
+    </head>
+       
+    <body class="body">
+    	<div class="modal-dialog modal-lg">
+    		
+    			<div class="modal-content">
+                    {% if object == false %}
+                        <form enctype=multipart/form-data role="form" action="{% url 'DocumentoAddTOtest'%}" method="post">
+                    {% endif %}
+					<form enctype="multipart/form-data" method="post">
+						{% csrf_token %}
+						<div class="col-sm-12" class="form-group">
+							
+							<div class="content-titulos">
+								<div class="close" style="color:black;">x</div>
+								<h1><b> AGREGAR DOCUMENTO CSV</b></h1>
+							</div>
+							<div class="content-filas">
+								<p><b>*Nota:</b> Subir archivo CSV con cantidad de caracteristicas de estudio de diagnóstico de Parkinson por nota de voz</p>
+							</div>
+                            <div  class="col-sm-12">
+                                <label for="{{form.documento.name}}">{{form.documento.label}}</label>
+                                {{form.documento}}
+                            </div>
+							<div class="col-sm-12 col-md-offset-0">
+								<div class="form-group" style="text-align:center;">
+									<br><button class="btn btn-primary "type="submit">Diagnosticar</button>
+								</div>
+							</div>
+						
+						</div>
+						
+					</form>
+
+				</div>
+    	</div>
+
+		
+	</body>
+</html>
+<script>
+	document.querySelector('.close').addEventListener('click',
+	function(){
+		document.querySelector('.modal-content').style.display='none';
+		location.href =window.location.href;
+		//location.href ='/home_administrador/';
+	});
+</script>
+
+{% endblock%}

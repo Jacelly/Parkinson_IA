@@ -6,7 +6,7 @@ from tqdm.auto import tqdm
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView,TemplateView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from apps.Diagnostico.forms import DiagnosticoForm
+from apps.Diagnostico.forms import DiagnosticoForm,DiagnosticoCSVForm
 
 import nibabel as nib
 import matplotlib.pyplot as plt
@@ -25,6 +25,7 @@ from apps.Doctor.models import Doctor
 import csv
 import numpy as np
 from numpy import mean
+from pandas import read_csv
 from numpy import std
 import pandas as pd
 from sklearn.preprocessing import normalize
@@ -657,6 +658,7 @@ Obtener el overlay entre la mascara de intensidades y la MRI FLAIR
 def getOverlay(FLAIR_image_path,MASK_image_path,PathNameImageOverlay):
 
     color = [252,132,13]
+    
 
     #FLAIR_image_path = './input/pre/mrESANDI_ITOIZ_JUAN_JOSE_t2_tirm_TRA_dark-fluid_3mm_20110524164030_9.nii.gz'#'./input/pre/T1.nii.gz'#sys.argv[2] #absolute path of the t1 image.    
     #MASK_image_path =  '/content/Parkison-s-disease-/output/HM_EsantiJuanJose.nii.gz'
@@ -671,7 +673,7 @@ def getOverlay(FLAIR_image_path,MASK_image_path,PathNameImageOverlay):
     rescaled_FLAIR = sitk.Cast(sitk.RescaleIntensity(resampled_FLAIR), sitk.sitkUInt8)
 
     #GUARDO EL OVERLAY ENTRE LAS IMAGENES
-    sitk.WriteImage(sitk.LabelOverlay(rescaled_FLAIR, MASK_image, 0.5,colormap=color), PathNameImageOverlay) 
+    sitk.WriteImage(sitk.LabelOverlay(rescaled_FLAIR, MASK_image, 0.5), PathNameImageOverlay) 
 
 
 '''
@@ -782,28 +784,29 @@ def guardarMejorModeloML(fileNameModeloSavePKL):
           #joblib.dump(algoritmo,fileNameModeloSavePKL)
 #Diagnostico PD mediante datos de caracteristicas de archivo CSV
 def diagnosticoFinalPD_Habla(StrFeaturesToPredict):
-
-
-  listaDataFeatures=StrFeaturesToPredict.split('","') #lista de string separado por ","
+  listaDataFeatures=StrFeaturesToPredict.split(',') #lista de string separado por ","
   print(len(listaDataFeatures))
   print(listaDataFeatures)
+  #listaDataFeatures=StrFeaturesToPredict.split('","') #lista de string separado por ","
+  #print(len(listaDataFeatures))
+  #print(listaDataFeatures)
   if(len(listaDataFeatures) <=1):
     return  "-- %" , "-- %"
-  strLista=" ".join(listaDataFeatures)#Unimos los lementos de la lista por vacio
-  strLista=strLista.replace('"',' ') #reemplazamos la comilla " por espacio vacio
-  listaDataFeatures=strLista.split(' ') #obtenemos una nueva lista separada por vacios
-  listaDataFeatures.pop(0) #se elimina el primer elemento de la lista porque es un espacio vacio
-  listaDataFeatures.pop(-1) #se elimina el ultimo elemento de la lista porque es un espacio vacio
+  #strLista=" ".join(listaDataFeatures)#Unimos los lementos de la lista por vacio
+  #strLista=strLista.replace('"',' ') #reemplazamos la comilla " por espacio vacio
+  #listaDataFeatures=strLista.split(' ') #obtenemos una nueva lista separada por vacios
+  #listaDataFeatures.pop(0) #se elimina el primer elemento de la lista porque es un espacio vacio
+  #listaDataFeatures.pop(-1) #se elimina el ultimo elemento de la lista porque es un espacio vacio
   listaDataFeatures2=[listaDataFeatures]#Lista de lista de datos de las features
   #print(listaDataFeatures2)
   clf_from_joblib=joblib.load('media/models/ClasificadorPDHabla_202.pkl')
   pred2=clf_from_joblib.predict(listaDataFeatures2)
-  #print(pred2)
+  print(pred2)
   #print(clf_from_joblib.predict_proba(listaDataFeatures2))
   porcentajeH=clf_from_joblib.predict_proba(listaDataFeatures2)[0,0]
-  #print(porcentajeH)
+  print(porcentajeH)
   porcentajePD=clf_from_joblib.predict_proba(listaDataFeatures2)[0,1]
-  #print(porcentajePD)
+  print(porcentajePD)
 
   return str(round(porcentajePD, 2)*100) + "%" ,str(round(porcentajeH,2)*100) + "%"
 def diagnosticoFinalPD_MRI(listFeaturesToPredict):
@@ -848,9 +851,43 @@ def precisionesCsv_Habla(request):
 #View para ingresar data para diagnosticar PD con el modelo de clasifcicacion de ML
 def pruebasMLCsv_Habla(request):
     if request.method == 'GET':       
-        return render(request, 'Diagnostico/IngresoDataToValid.html') 
+        #return render(request, 'Diagnostico/IngresoDataToValid.html') 
+        return render(request, 'Diagnostico/IngresoDataToTest.html') 
     return redirect('home_administrador')
 #View para calcular el diagnostico de PD
+def DocumentoAddTOtest(request):
+
+    if request.method == 'POST':
+        form = DiagnosticoCSVForm(request.POST ,request.FILES or None)
+        if form.is_valid():
+            form2=form.save()
+            print("PRUEBA OK",form2.documento)
+            data = read_csv(form2.documento, header=None)
+            data = data.values
+            fila1=data[2,1:]
+            strFeatures=','.join(fila1)
+            diagnostico1,diagnostico2=diagnosticoFinalPD_Habla(strFeatures)
+            print(diagnostico1)
+            print(diagnostico2)
+            if(diagnostico1=="-- %" and diagnostico2=="-- %"):
+                messages.error(request, 'No se puede llevar a cabo el diagnostico, ingreso dato valido!')
+                return redirect('home_administrador')
+            print("REQUEST METHOD: ", request.method)
+            #CSV.objects.all().delete()
+            if request.method == 'POST': 
+                print(diagnostico1)
+                print(diagnostico2)
+                messages.success(request, 'Su diagnóstico se ha completado con éxito.')       
+                return render(request, 'Diagnostico/diagnosticoHabla.html',{'data1':diagnostico1,'data2':diagnostico2}) 
+
+            return redirect('home_administrador')
+
+    else:
+        form = DiagnosticoCSVForm()
+    #messages.success(request, 'Su documento ha sido creado con éxito.')
+    return render(request, 'Diagnostico/IngresoDataToTest.html', {
+        'form': form,
+    })
 def diagnoticoPorCsv_Habla(request):
     #path="media/models/ClasificadorPDHabla.pkl"
     #NameModel="ClasificadorPDHabla.pkl"

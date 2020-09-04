@@ -6,6 +6,10 @@ urlpatterns = [
 	path('precisionesCsv_Habla/', views.precisionesCsv_Habla, name="precisionesCsv_Habla"),
 	path('diagnoticoPorCsv_Habla', views.diagnoticoPorCsv_Habla, name='diagnoticoPorCsv_Habla'),
 	path('pruebasMLCsv_Habla/', views.pruebasMLCsv_Habla, name='pruebasMLCsv_Habla'),
+
+	path('pruebasMLCsv_Habla1/', views.DocumentoAddTOtest, name='DocumentoAddTOtest'),
+
+
 	path('barraCargaModeloDiagPorMRI', views.barraCargaModeloDiagPorMRI, name='barraCargaModeloDiagPorMRI'),
 	path('diagnoticoPorMRI', views.diagnoticoPorMRI, name='diagnoticoPorMRI'),
 

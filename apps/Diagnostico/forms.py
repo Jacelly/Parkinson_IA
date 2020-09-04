@@ -1,5 +1,6 @@
 from django import forms
 from apps.Diagnostico.models import Diagnostico
+from apps.Archivo.models import CSV
 #from apps.Sujeto.models import Sujeto
 #from betterforms.multiform import MultiModelForm
 #class SujetoForm(forms.ModelForm):
@@ -41,4 +42,15 @@ class DiagnosticoForm(forms.ModelForm):
 		widgets = {
             'descripcion': forms.Textarea(attrs={'class':'form-control','rows':4, 'cols':40}),
 		}
-		
+
+class DiagnosticoCSVForm(forms.ModelForm):
+	
+	class Meta:
+		model = CSV
+
+		fields = [
+			'documento',
+		]
+		labels = {
+			'documento': 'Documento',
+		}
