@@ -1020,7 +1020,7 @@ def EditarDiagObser(request, id_diag):
         instancia.descripcion = request.POST.get('descripcion', None)
         opcion=request.POST.get('is_parkinson', None)
         print("OBSERVA: ",instancia,opcion)
-        if(opcion=="Aceptar"):
+        if(opcion=="Si"):
             instancia.is_parkinson = True
         else:
             instancia.is_parkinson = False
